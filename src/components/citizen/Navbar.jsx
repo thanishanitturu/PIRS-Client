@@ -22,13 +22,21 @@ const navigation = [
   { name: "Dashboard", href: "/dashboard", current: false },
 ];
 
+const navigation2 = [
+  { name: "admin", href: "/", current: true },
+  { name: "Issues", href: "/about", current: false },
+  { name: "Users", href: "/issue-report", current: false },
+  { name: "Statistics", href: "/community", current: false },
+  { name: "Dashboard", href: "/dashboard", current: false },
+]
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar({ notifications }) {
 
-  const[token,setToken] = useState("hello");
+  const[token,setToken] = useState('');
   const navigate = useNavigate();
 
   const handleViewAll = () => {

@@ -6,6 +6,7 @@ const AppContext = createContext();
 // Create Provider Component
 export const AppProvider = ({ children }) => {
   const [count, setCount] = useState(0);
+  const [role,setRole] = useState("admin");
 
   // Function to update state
   const increment = () => setCount((prev) => prev + 1);
