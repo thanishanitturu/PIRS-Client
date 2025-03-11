@@ -23,11 +23,10 @@ const navigation = [
 ];
 
 const navigation2 = [
-  { name: "admin", href: "/", current: true },
-  { name: "Issues", href: "/about", current: false },
-  { name: "Users", href: "/issue-report", current: false },
-  { name: "Statistics", href: "/community", current: false },
-  { name: "Dashboard", href: "/dashboard", current: false },
+  { name: "Issues", href: "admin/issues", current: false },
+  { name: "Users", href: "admin/users", current: false },
+  { name: "Statistics", href: "admin/statistics", current: false },
+  // { name: "Dashboard", href: "/dashboard", current: false },
 ]
 
 function classNames(...classes) {
@@ -38,7 +37,7 @@ export default function Navbar({ notifications }) {
 
   const[token,setToken] = useState('');
   const navigate = useNavigate();
-
+  const[role,setRole] = useState("admin");
   const handleViewAll = () => {
     navigate("/notifications");
   };
@@ -70,7 +69,7 @@ export default function Navbar({ notifications }) {
                   />
                 </div>
                 <div className="hidden sm:flex justify-center space-x-4">
-                  {navigation.map((item) => (
+                  {role=="user" && navigation.map((item) => (
                     <Link
                       key={item.name}
                       to={item.href}
@@ -82,6 +81,20 @@ export default function Navbar({ notifications }) {
                       {item.name}
                     </Link>
                   ))}
+                  {
+                    role =="admin" && navigation2.map((item) => (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className={classNames(
+                          item.current ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                          "rounded-md px-3 py-2 text-sm font-medium"
+                        )}
+                      >
+                        {item.name}
+                      </Link>
+                    ))
+                  }
                 </div>
               </div>
 
@@ -171,7 +184,7 @@ export default function Navbar({ notifications }) {
           {/* Mobile Menu Panel */}
           <DisclosurePanel className="sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
-              {navigation.map((item) => (
+             {role == "user" &&  navigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
@@ -183,6 +196,20 @@ export default function Navbar({ notifications }) {
                   {item.name}
                 </Link>
               ))}
+              {
+                role =="admin" &&  navigation2.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={classNames(
+                      item.current ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                      "block rounded-md px-3 py-2 text-base font-medium"
+                    )}
+                  >
+                    {item.name}
+                  </Link>
+                ))
+              }
             </div>
           </DisclosurePanel>
         </>

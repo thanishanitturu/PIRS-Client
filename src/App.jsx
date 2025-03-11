@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import './App.css'
 import "font-awesome/css/font-awesome.min.css";
 import Example from './Navbar';
@@ -17,9 +17,12 @@ import MapWithMarkers from './utilities/MapWithMarkers';
 import Notifyall from './components/citizen/notifications/Notifyall';
 import LoginPage from './components/login/Loginpage';
 import SignupPage from './components/login/SignupPage';
-
+import AdminUsers from './components/admin/users/AdminUsers';
+import { Snackbar,Alert } from '@mui/material';
+import { AppContext } from './context/AppContext';
 function App() {
   const[role,setRole] = useState('user');
+  const{snackbar,setSnackbar} = useContext(AppContext);
 
   const [notifications, setNotifications] = useState([
     { id: 1, department: "Sanitation", message: "Your garbage collection issue  is under review.", time: "10:30 AM", date: "Jan 30, 2025", read: false },
@@ -58,12 +61,24 @@ function App() {
             <Route path='/notifications' element={<Notifyall notifications={notifications} setNotifications={setNotifications}  markAsRead={markAsRead}/>} />
             <Route path='/dashboard' element={<DashbordMainLayout /> } />
             <Route path='/community' element={<CommunityLayout /> } />
+            <Route path='/admin/users' element={<AdminUsers />} />
         </Routes>
         <Footer />
         
-         {/* <h1>hello world</h1>
-         {/* <MapWithMarker/> */}
-         {/* <MapWithMarkers /> */}
+
+        <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
       </>
   )
 }
