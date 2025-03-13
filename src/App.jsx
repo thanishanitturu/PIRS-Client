@@ -18,8 +18,11 @@ import Notifyall from './components/citizen/notifications/Notifyall';
 import LoginPage from './components/login/Loginpage';
 import SignupPage from './components/login/SignupPage';
 import AdminUsers from './components/admin/users/AdminUsers';
+import AdminIssues from './components/admin/reports/AdminIssues';
 import { Snackbar,Alert } from '@mui/material';
 import { AppContext } from './context/AppContext';
+import AdminStatistics from './components/admin/statistics/AdminStatistics';
+import ProfileLayout from './components/profile/ProfileLayout';
 function App() {
   const[role,setRole] = useState('user');
   const{snackbar,setSnackbar} = useContext(AppContext);
@@ -62,6 +65,9 @@ function App() {
             <Route path='/dashboard' element={<DashbordMainLayout /> } />
             <Route path='/community' element={<CommunityLayout /> } />
             <Route path='/admin/users' element={<AdminUsers />} />
+            <Route path='/admin/issues' element={<AdminIssues />} />
+            <Route path='/admin/statistics' element={<AdminStatistics />} />
+            <Route path='/profile' element={<ProfileLayout />} />
         </Routes>
         <Footer />
         

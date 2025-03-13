@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { Dialog } from "@headlessui/react";
 import { FaEdit, FaTrash, FaSpinner, FaTimes, FaPlus } from "react-icons/fa";
 import { editCitizen, deleteCitizen, users as initialUsers } from "./Citizenfunc";
 import { authorities as initialAuthorities, deleteAuthority, editAuthority } from "./Authorityfunc";
@@ -48,10 +49,11 @@ const AdminUsers = () => {
     setAddingAuthority(false);
     setNewAuthority({ name: "", email: "", phoneNumber: "", department: "" });
   };
-  const handleAddAuthority = () => {
+  const handleAddAuthority = () => {  
     setAuthorities([...authorities, { ...newAuthority, id: Date.now() }]);
-    setSnackbar({ message: "Authority added successfully", type: "success" });
+    setSnackbar({ message: "Authority added successfully", type: "success",open:true });
     closeAddModal();
+    console.log(authorities);
   };
   
   return (
@@ -137,19 +139,36 @@ const AdminUsers = () => {
 
       {/* Delete Modal */}
       {deletingItem && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
-            <h3 className="text-xl font-semibold mb-4">Confirm Deletion</h3>
-            <p>Are you sure you want to delete {deletingItem.name}?</p>
-            <div className="flex justify-end space-x-2">
-              <button onClick={closeDeleteModal} className="px-4 py-2 bg-gray-400 text-white rounded-md">Cancel</button>
-              <button onClick={handleDelete} className="px-4 py-2 bg-red-600 text-white rounded-md flex items-center">
-                {loading ? <FaSpinner className="animate-spin mr-2" /> : "Delete"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+  <Dialog 
+    open={deletingItem !== null} 
+    onClose={closeDeleteModal} 
+    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+  >
+    <div className="bg-white p-6 rounded-lg w-96">
+      <h2 className="text-lg font-bold mb-4 text-gray-900">Confirm Deletion</h2>
+      <p className="text-gray-700">Are you sure you want to delete <span className="font-semibold">{deletingItem.name}</span>?</p>
+      <div className="mt-4 flex gap-2">
+        <button 
+          className="w-full bg-gray-500 text-white p-2 rounded transition duration-200 hover:bg-gray-600"
+          onClick={closeDeleteModal}
+        >
+          Cancel
+        </button>
+        <button 
+          className="w-full bg-red-500 text-white p-2 rounded flex items-center justify-center transition duration-200 hover:bg-red-600 disabled:bg-red-300"
+          onClick={handleDelete}
+          disabled={loading}
+        >
+          {loading ? <FaSpinner className="animate-spin text-xl" /> : "Delete"}
+        </button>
+      </div>
+    </div>
+  </Dialog>
+)}
+
+
+
+    
 
         {/* Add Authority Modal */}
         {addingAuthority && (
