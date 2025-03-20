@@ -3,7 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } fro
 
 // Sample department data
 const departmentData = [
-    { dept: "Sanitation1", resolved: 40, pending: 30, unresolved: 15 },
+  { dept: "Sanitation1", resolved: 40, pending: 30, unresolved: 15 },
   { dept: "Sanitation", resolved: 40, pending: 30, unresolved: 15 },
   { dept: "Electrical", resolved: 90, pending: 25, unresolved: 10 },
   { dept: "Water Supply", resolved: 20, pending: 35, unresolved: 12 },

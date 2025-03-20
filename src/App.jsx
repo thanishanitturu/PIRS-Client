@@ -23,6 +23,7 @@ import { Snackbar,Alert } from '@mui/material';
 import { AppContext } from './context/AppContext';
 import AdminStatistics from './components/admin/statistics/AdminStatistics';
 import ProfileLayout from './components/profile/ProfileLayout';
+import DepartmentAdmin from './components/individualAdmin/issues/DepartmentAdmin';
 function App() {
   const[role,setRole] = useState('user');
   const{snackbar,setSnackbar} = useContext(AppContext);
@@ -52,6 +53,12 @@ function App() {
         { role==="user" && <Navbar notifications={unreadNotifications} />  }
         { role==="admin" && <Example /> }
         { role==="department" && <Example /> }
+        {/* Department-specific admin pages */}
+      {(role === "electricityDeptAdmin" || role === "waterDeptAdmin" || role === "trafficDeptAdmin" || role === "sanitationDeptAdmin" || role === "municipalityDeptAdmin") && (
+        <>
+          <Navbar notifications={unreadNotifications} />
+        </>
+      )}
 
 
         <Routes>
@@ -68,6 +75,7 @@ function App() {
             <Route path='/admin/issues' element={<AdminIssues />} />
             <Route path='/admin/statistics' element={<AdminStatistics />} />
             <Route path='/profile' element={<ProfileLayout />} />
+            <Route path="/department/issues" element={<DepartmentAdmin role="Traffic"/>}/>
         </Routes>
         <Footer />
         
