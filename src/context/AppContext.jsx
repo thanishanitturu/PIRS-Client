@@ -3,7 +3,7 @@ import React, { createContext, useState } from "react";
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [role, setRole] = useState("user");
+  const [role, setRole] = useState("admin");
   const [snackbar, setSnackbar] = useState({ open:false, severity: "success", message: "" });
   
 
