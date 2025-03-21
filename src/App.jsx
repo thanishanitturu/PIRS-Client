@@ -25,7 +25,7 @@ import AdminStatistics from './components/admin/statistics/AdminStatistics';
 import ProfileLayout from './components/profile/ProfileLayout';
 import DepartmentAdmin from './components/individualAdmin/issues/DepartmentAdmin';
 function App() {
-  const[role,setRole] = useState('user');
+  const[role,setRole] = useState('trafficDeptAdmin');
   const{snackbar,setSnackbar} = useContext(AppContext);
 
   const [notifications, setNotifications] = useState([
