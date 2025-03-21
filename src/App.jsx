@@ -1,7 +1,6 @@
 import { useContext, useState } from 'react'
 import './App.css'
 import "font-awesome/css/font-awesome.min.css";
-import Example from './Navbar';
 import {Route, Routes} from 'react-router-dom';
 import Navbar from './components/citizen/Navbar';
 
@@ -50,8 +49,8 @@ function App() {
       <>
       <ScrollToTop />
         { role==="user" && <Navbar notifications={unreadNotifications} />  }
-        { role==="admin" && <Example /> }
-        { role==="department" && <Example /> }
+        {/* { role==="user" && <Example /> } */}
+        {/* { role==="department" && <Example /> } */}
 
 
         <Routes>

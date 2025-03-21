@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   Disclosure,
   DisclosureButton,
@@ -13,6 +13,7 @@ import {
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
@@ -26,7 +27,6 @@ const navigation2 = [
   { name: "Issues", href: "admin/issues", current: false },
   { name: "Users", href: "admin/users", current: false },
   { name: "Statistics", href: "admin/statistics", current: false },
-  // { name: "Dashboard", href: "/dashboard", current: false },
 ]
 
 function classNames(...classes) {
@@ -37,7 +37,7 @@ export default function Navbar({ notifications }) {
 
   const[token,setToken] = useState('');
   const navigate = useNavigate();
-  const[role,setRole] = useState("admin");
+  const{role} = useContext(AppContext);
   const handleViewAll = () => {
     navigate("/notifications");
   };
