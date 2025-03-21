@@ -33,17 +33,16 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Navbar({ notifications }) {
+export default function Navbar() {
   const [token, setToken] = useState("");
   const navigate = useNavigate();
-  const { role } = useContext(AppContext);
+  const { role, notifications, setNotifications } = useContext(AppContext);
   const location = useLocation();
 
   const handleViewAll = () => {
     navigate("/notifications");
   };
 
-  // Function to update the current property based on the current route
   const updateNavigation = (navItems) => {
     return navItems.map((item) => ({
       ...item,
@@ -51,9 +50,19 @@ export default function Navbar({ notifications }) {
     }));
   };
 
-  // Update navigation items based on the current route
   const updatedNavigation = updateNavigation(navigation);
   const updatedNavigation2 = updateNavigation(navigation2);
+
+  const markAsRead = (id) => {
+    setNotifications((prev) =>
+      prev.map((notif) =>
+        notif.id === id ? { ...notif, read: true } : notif
+      )
+    );
+  };
+
+  // Filter only unread notifications
+  const unreadNotifications = notifications.filter((notif) => !notif.read);
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -74,14 +83,14 @@ export default function Navbar({ notifications }) {
 
               {/* Logo and Navigation Links */}
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-between">
-                  <div className="flex shrink-0 items-center">
-                    <img
-                      alt="Your Company"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      className="h-8 w-auto rounded-full"
-                    />
-                    <span className="ml-6 text-white text-xl font-semibold">PIRS</span>
-              </div>
+                <div className="flex shrink-0 items-center">
+                  <img
+                    alt="Your Company"
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    className="h-8 w-auto rounded-full"
+                  />
+                  <span className="ml-6 text-white text-xl font-semibold">PIRS</span>
+                </div>
                 <div className="hidden sm:flex justify-center space-x-4">
                   {role === "user" &&
                     updatedNavigation.map((item) => (
@@ -127,42 +136,48 @@ export default function Navbar({ notifications }) {
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                   {/* Notifications */}
                   <Popover className="relative">
-                    <PopoverButton className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
-                      <BellIcon className="size-6" />
-                      {notifications.length > 0 && (
-                        <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                          {notifications.length}
-                        </span>
-                      )}
-                    </PopoverButton>
-
-                    {/* Popover Panel positioned below the bell icon */}
-                    <PopoverPanel className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 z-50 w-64 sm:w-80 bg-white shadow-lg rounded-lg p-4">
-                      <div className="relative bg-white p-4 rounded-lg shadow">
-                        {/* Small arrow indicator */}
-                        <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 sm:left-auto sm:right-6 w-4 h-4 rotate-45 bg-white"></div>
-
-                        <h2 className="text-lg font-semibold">Notifications</h2>
-                        <div className="mt-2 max-h-60 overflow-y-auto">
-                          {notifications.length > 0 ? (
-                            notifications.map((notification, index) => (
-                              <div key={index} className="p-2 border-b text-gray-700">
-                                <strong className="text-blue-600">{notification.department}</strong>: {notification.message}
-                                <div className="text-xs text-gray-500">{notification.date} at {notification.time}</div>
-                              </div>
-                            ))
-                          ) : (
-                            <p className="text-gray-500">No new notifications</p>
+                    {({ close }) => (
+                      <>
+                        <PopoverButton className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
+                          <BellIcon className="size-6" />
+                          {unreadNotifications.length > 0 && (
+                            <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                              {unreadNotifications.length}
+                            </span>
                           )}
-                        </div>
-                        <button
-                          onClick={handleViewAll}
-                          className="mt-4 block w-full rounded bg-blue-600 py-2 text-center text-white hover:bg-blue-700"
-                        >
-                          View All
-                        </button>
-                      </div>
-                    </PopoverPanel>
+                        </PopoverButton>
+
+                        <PopoverPanel className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 z-50 w-64 sm:w-80 bg-white shadow-lg rounded-lg p-4">
+                          <div className="relative bg-white p-4 rounded-lg shadow">
+                            {/* Small arrow indicator */}
+                            <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 sm:left-auto sm:right-6 w-4 h-4 rotate-45 bg-white"></div>
+
+                            <h2 className="text-lg font-semibold">Notifications</h2>
+                            <div className="mt-2 max-h-60 overflow-y-auto">
+                              {unreadNotifications.length > 0 ? (
+                                unreadNotifications.map((notification, index) => (
+                                  <div key={index} className="p-2 border-b text-gray-700">
+                                    <strong className="text-blue-600">{notification.department}</strong>: {notification.message}
+                                    <div className="text-xs text-gray-500">{notification.date} at {notification.time}</div>
+                                  </div>
+                                ))
+                              ) : (
+                                <p className="text-gray-500">No new notifications</p>
+                              )}
+                            </div>
+                            <button
+                              onClick={() => {
+                                handleViewAll(); // Navigate to the notifications page
+                                close(); // Close the popover panel
+                              }}
+                              className="mt-4 block w-full rounded bg-blue-600 py-2 text-center text-white hover:bg-blue-700"
+                            >
+                              View All
+                            </button>
+                          </div>
+                        </PopoverPanel>
+                      </>
+                    )}
                   </Popover>
 
                   {/* Profile Menu */}

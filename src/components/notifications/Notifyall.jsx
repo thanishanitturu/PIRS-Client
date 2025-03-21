@@ -1,7 +1,23 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AppContext } from "../../context/AppContext";
 
-export default function Notifyall({notifications,markAsRead}) {
- 
+export default function Notifyall() {
+
+  const{notifications,setNotifications} = useContext(AppContext);
+  const markAsRead = (id) => {
+    setNotifications((prev) =>
+      prev.map((notif) =>
+        notif.id === id ? { ...notif, read: true } : notif
+      )
+    );
+  };
+
+  // Filter only unread notifications
+  const unreadNotifications = notifications.filter((notif) => !notif.read);
+  useEffect(()=>{
+    markAsRead();
+  },[]);
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <h1 className="text-2xl font-semibold text-gray-800 mb-4">Notifications</h1>
