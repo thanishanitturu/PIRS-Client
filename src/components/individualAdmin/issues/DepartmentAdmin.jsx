@@ -8,7 +8,7 @@ const issuesData = [
   { id: 3, title: "Traffic Issue", description: "Traffic congestion is unbearable", reportedBy: "Bob", department: "Traffic", status: "Resolved", date: "2025-03-10", isVerifiedByAdmin: false, images: ["https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg","https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg"] },
 ];
 
-export default function DepartmentAdmin({ role }) {
+export default function DepartmentAdmin() {
   const [issues, setIssues] = useState(issuesData);
   const [selectedTab, setSelectedTab] = useState("new");
   const [searchText, setSearchText] = useState("");
@@ -20,7 +20,12 @@ export default function DepartmentAdmin({ role }) {
   const [issueToDelete, setIssueToDelete] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editedStatus, setEditedStatus] = useState("");
-  const { setSnackbar, snackbar } = useContext(AppContext);
+  const { role, setSnackbar, snackbar } = useContext(AppContext);
+  const department = role.replace("DeptAdmin",""); // Corrected this line
+  // Optional: Capitalize the department name
+  const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+  const formattedDepartment = capitalize(department);
+
   const [loading, setLoading] = useState(false);
 
   // Filter issues based on the department
@@ -28,7 +33,7 @@ export default function DepartmentAdmin({ role }) {
     const matchesTab = selectedTab === "new" ? !issue.isVerifiedByAdmin : issue.isVerifiedByAdmin;
     const matchesSearch = issue.title.toLowerCase().includes(searchText.toLowerCase()) ||
                           issue.description.toLowerCase().includes(searchText.toLowerCase());
-    const matchesDepartment = issue.department === role;
+    const matchesDepartment = issue.department === formattedDepartment;
     const matchesStatus = statusFilter ? issue.status === statusFilter : true;
     const matchesDate = (!dateFilter.start || new Date(issue.date) >= new Date(dateFilter.start)) &&
                         (!dateFilter.end || new Date(issue.date) <= new Date(dateFilter.end));
@@ -50,7 +55,7 @@ export default function DepartmentAdmin({ role }) {
     setLoading(true);
     setTimeout(() => {  
       const updatedIssues = issues.map(issue => {
-        if (!issue.isVerifiedByAdmin && issue.department === role) {
+        if (!issue.isVerifiedByAdmin && issue.department === formattedDepartment) {
           return { ...issue, isVerifiedByAdmin: true };
         }
         return issue;
@@ -86,7 +91,7 @@ export default function DepartmentAdmin({ role }) {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">{role} - Manage Issues</h2>
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">{formattedDepartment} - Manage Issues</h2>
       <div className="flex space-x-4 mb-6">
         <button className={`p-2 rounded ${selectedTab === 'new' ? 'bg-blue-500 text-white' : 'bg-gray-300'}`} onClick={() => setSelectedTab('new')}>Newly Reported Issues</button>
         <button className={`p-2 rounded ${selectedTab === 'verified' ? 'bg-blue-500 text-white' : 'bg-gray-300'}`} onClick={() => setSelectedTab('verified')}>Verified Issues</button>

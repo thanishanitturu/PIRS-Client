@@ -42,7 +42,7 @@ function App() {
         <Route path='/admin/issues' element={<AdminIssues />} />
         <Route path='/admin/statistics' element={<AdminStatistics />} />
         <Route path='/profile' element={<ProfileLayout />} />
-        <Route path="/department/issues" element={<DepartmentAdmin role="Traffic" />} />
+        <Route path="/department/issues" element={<DepartmentAdmin/>} />
       </Routes>
       
       <Footer />

@@ -42,6 +42,7 @@ export default function Navbar() {
   const [token, setToken] = useState("");
   const navigate = useNavigate();
   const { role, notifications, setNotifications } = useContext(AppContext);
+
   const location = useLocation();
 
   const handleViewAll = () => {
