@@ -3,7 +3,6 @@ import './App.css'
 import "font-awesome/css/font-awesome.min.css";
 import {Route, Routes} from 'react-router-dom';
 import Navbar from './components/citizen/Navbar';
-
 import DashbordMainLayout from './components/citizen/issues/DashbordMainLayout';
 import IssueForm from './components/citizen/issues/IssueForm';
 import Homepage from './components/Homepage';
@@ -48,9 +47,7 @@ function App() {
   return (
       <>
       <ScrollToTop />
-        { role==="user" && <Navbar notifications={unreadNotifications} />  }
-        {/* { role==="user" && <Example /> } */}
-        {/* { role==="department" && <Example /> } */}
+        <Navbar notifications={unreadNotifications} />
 
 
         <Routes>
@@ -71,18 +68,10 @@ function App() {
         <Footer />
         
 
-        <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-      >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
+        <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar({ ...snackbar, open: false })} >
+          <Alert  onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} sx={{ width: "100%" }}>
+            {snackbar.message}
+          </Alert>
       </Snackbar>
       </>
   )

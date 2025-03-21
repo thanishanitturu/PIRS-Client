@@ -17,7 +17,6 @@ const Dashboard = () => {
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [openModal, setOpenModal] = useState(false);
 
-  // Sample issues array
   const initialIssues = [
     {
       id: 1,
@@ -52,10 +51,8 @@ const Dashboard = () => {
       latitude: 51.515,
       longitude: -0.1,
     },
-    // Add more issues here as needed
   ];
 
-  // Fetch issues (simulate API call)
   useEffect(() => {
     setTimeout(() => {
       setIssues(initialIssues);
@@ -63,18 +60,15 @@ const Dashboard = () => {
     }, 1500);
   }, []);
 
-  // Update filtered issues whenever searchTerm, filters, or issues change
   useEffect(() => {
     let updatedIssues = issues;
 
-    // Filter by search term
     if (searchTerm) {
       updatedIssues = updatedIssues.filter((issue) =>
         issue.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    // Filter by status
     if (filters.pending || filters.resolved || filters.inProgress) {
       updatedIssues = updatedIssues.filter((issue) =>
         (filters.pending && issue.status === "Pending") ||
@@ -142,7 +136,6 @@ const Dashboard = () => {
             Reported on: {new Date(issue.date).toLocaleDateString()}
           </p>
         
-          {/* Status, Likes, and Comments count in one line */}
           <div className="mt-4 flex items-center justify-between">
             <p
               className={`text-sm font-semibold flex items-center ${
@@ -158,7 +151,6 @@ const Dashboard = () => {
               {issue.status}
             </p>
             
-            {/* Likes and Comments Count */}
             <div className="flex items-center">
               <p className="mr-4 flex items-center text-gray-500">
                 <ThumbUp className="text-gray-400 mr-2" />
@@ -175,7 +167,6 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Modal to display issue details */}
       <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="md">
   <DialogTitle>{selectedIssue?.title}</DialogTitle>
   <DialogContent>
@@ -187,7 +178,6 @@ const Dashboard = () => {
       />
     </div>
 
-    {/* Date and Location in one line */}
     <div className="flex items-center space-x-4 mt-2">
       <div className="flex items-center">
         <AccessTime className="text-gray-400 mr-2" />
@@ -201,7 +191,6 @@ const Dashboard = () => {
       </div>
     </div>
 
-    {/* Category and Status in one line */}
     <div className="flex items-center space-x-4 mt-4">
       <div className="flex items-center">
         <span className="text-gray-600 font-semibold">Category:</span>
@@ -226,13 +215,11 @@ const Dashboard = () => {
       </div>
     </div>
 
-    {/* Description in one line */}
     <div className="mt-4">
       <strong>Description:</strong>
       <p className="text-gray-600">{selectedIssue?.description}</p>
     </div>
 
-    {/* Comments */}
     <div className="mt-4">
       <strong>Comments:</strong>
       <ul className="mt-2">

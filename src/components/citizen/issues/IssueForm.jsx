@@ -10,7 +10,6 @@ const IssueForm = () => {
   const [department, setDepartment] = useState('');
   const [photos, setPhotos] = useState([]);
   const [photoPreviews, setPhotoPreviews] = useState([]);
-  // const [location, setLocation] = useState('');
   const [position, setPosition] = useState(null);
    const [address, setAddress] = useState('Fetching address...');
 
@@ -118,17 +117,6 @@ const IssueForm = () => {
   );
 
   const renderLocationInput = () => (
-    // <Box>
-    //   <TextField
-    //     label="Location"
-    //     value={location}
-    //     onChange={(e) => setLocation(e.target.value)}
-    //     fullWidth
-    //     required
-    //     sx={{ mb: 2 }}
-    //   />
-    //   <Button variant="outlined" onClick={() => setLocation('Fetched Location')}>Add Location</Button>
-    // </Box>
     <MapWithMarker position={position} setPosition={setPosition} address={address} setAddress={setAddress}/>
   );
 
@@ -140,13 +128,10 @@ const IssueForm = () => {
     <Typography variant="body1" paragraph>
       <strong>From:</strong> <br />
       [Your Organization's Name] <br />
-      {/* [Your Address] <br /> */}
-      {/* [City, State, ZIP Code] <br /> */}
-      {/* {address} */}
+    
     </Typography>
     <Typography variant="body1" paragraph>
       <strong>To:</strong> <br />
-      {/* Concerned Department <br /> */}
       {department} <br />
     </Typography>
     <Typography variant="body1" paragraph>

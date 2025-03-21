@@ -118,36 +118,29 @@ function CommunityLayout() {
     let filtered = [...issues];
     console.log('called');
     
-    // Apply search filter
     if (searchTerm) {
       filtered = filtered.filter((issue) => issue.title.toLowerCase().includes(searchTerm.toLowerCase()));
     }
   
-    // Apply status filter
     if (status) {
       filtered = filtered.filter((issue) => issue.status === status);
     }
   
-    // Apply category filter
     if (category) {
       filtered = filtered.filter((issue) => issue.category === category);
     }
   
-    // Apply date filter
     if (dateReported) {
       filtered = filtered.filter((issue) => issue.date === dateReported);
     }
   
-    // Apply sorting
     if (sortBy === "newest") {
       filtered.sort((a, b) => new Date(b.dateReported) - new Date(a.dateReported));
     } else if (sortBy === "most-upvoted") {
-      filtered.sort((a, b) => b.likes - a.likes); // Use 'likes' instead of 'upvotes'
-    }
+      filtered.sort((a, b) => b.likes - a.likes);
   
-    console.log(filtered); // Log the filtered array
+    console.log(filtered); 
   
-    // Update the state
     setFilteredIssues(filtered);
   };
   
@@ -159,7 +152,6 @@ function CommunityLayout() {
     <StatisticsLayout  initialIssues={initialIssues}/>
     <SearchFilter onFilterChange={handleFilterChange} setSortBy={setSortBy} setDateReported={setDateReported} searchTerm={searchTerm} status={status} category={category} dateReported={dateReported} sortBy={sortBy} setCategory={setCategory} setSearchTerm={setSearchTerm} setStatus={setStatus}/>
     <IssueGrid issues={filteredIssues} />
-
     </>
   )
 }

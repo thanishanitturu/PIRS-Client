@@ -20,17 +20,16 @@ const SearchFilter = ({ onFilterChange,searchTerm,setSearchTerm,category,setCate
         value={searchTerm}
         onChange={(e) => {
           setSearchTerm(e.target.value);
-          // handleFilterChange();
         }}
       />
 
-      {/* Status Filter */}
+     
       <select
         className="border p-2 rounded w-full md:w-1/6"
         value={status}
         onChange={(e) => {
           setStatus(e.target.value);
-          // handleFilterChange();
+        
         }}
       >
         <option value="">All Status</option>
@@ -39,13 +38,12 @@ const SearchFilter = ({ onFilterChange,searchTerm,setSearchTerm,category,setCate
         <option value="Resolved">Resolved</option>
       </select>
 
-      {/* Category Filter */}
       <select
         className="border p-2 rounded w-full md:w-1/6"
         value={category}
         onChange={(e) => {
           setCategory(e.target.value);
-          // handleFilterChange();
+       
         }}
       >
         <option value="">All Categories</option>
@@ -55,28 +53,25 @@ const SearchFilter = ({ onFilterChange,searchTerm,setSearchTerm,category,setCate
         <option value="Water">Water Supply</option>
       </select>
 
-      {/* Date Picker */}
       <input
         type="date"
         className="border p-2 rounded w-full md:w-1/6"
         value={dateReported}
         onChange={(e) => {
           setDateReported(e.target.value);
-          // handleFilterChange();
+       
         }}
       />
 
-      {/* Sorting Options */}
+    
       <select
         className="border p-2 rounded w-full md:w-1/6"
         value={sortBy}
         onChange={(e) => {
           setSortBy(e.target.value);
-          // handleFilterChange();
         }}
       >
         <option value="newest">Newest First</option>
-        {/* <option value="most-reported">Most Reported</option> */}
         <option value="most-upvoted">Most Upvoted</option>
       </select>
     </div>
