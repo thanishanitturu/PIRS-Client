@@ -1,20 +1,22 @@
-import { Tune } from "@mui/icons-material";
 import React, { createContext, useState } from "react";
 
-// Create Context
 export const AppContext = createContext();
 
-// Create Provider Component
 export const AppProvider = ({ children }) => {
-  const [count, setCount] = useState(0);
   const [role, setRole] = useState("admin");
   const [snackbar, setSnackbar] = useState({ open:false, severity: "success", message: "" });
+  
 
-  // Function to update state
-  const increment = () => setCount((prev) => prev + 1);
-
+  const [notifications, setNotifications] = useState([
+    { id: 1, department: "Sanitation", message: "Your garbage collection issue  is under review.", time: "10:30 AM", date: "Jan 30, 2025", read: false },
+    { id: 2, department: "Electricity Board", message: "Power outage in your area has been reported.", time: "09:15 AM", date: "Jan 30, 2025", read: false },
+    { id: 3, department: "Water Department", message: "Your water leakage complaint is being addressed.", time: "08:45 AM", date: "Jan 30, 2025", read: false },
+    { id: 4, department: "Traffic Police", message: "Your traffic signal issue has been forwarded.", time: "07:30 AM", date: "Jan 29, 2025", read: false },
+    { id: 5, department: "Municipality", message: "Streetlight repair request is in progress.", time: "06:20 AM", date: "Jan 29, 2025", read: false },
+  ]);
+  
   return (
-    <AppContext.Provider value={{ count, setCount, role, setRole, snackbar, setSnackbar }}>
+    <AppContext.Provider value={{role, setRole, snackbar, setSnackbar,notifications,setNotifications }}>
       {children}
     </AppContext.Provider>
   );

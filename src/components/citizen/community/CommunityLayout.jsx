@@ -1,8 +1,9 @@
-import React,{useState} from 'react'
-import HeadingComponent from './HeadingComponent'
-import StatisticsLayout from './StatisticsLayout'
-import SearchFilter from './SearchFilter'
-import IssueGrid from './IssueGrid'
+import React, { useState } from 'react';
+import HeadingComponent from './HeadingComponent';
+import StatisticsLayout from './StatisticsLayout';
+import SearchFilter from './SearchFilter';
+import IssueGrid from './IssueGrid';
+
 let initialIssues = [
   {
     id: 1,
@@ -105,63 +106,68 @@ let initialIssues = [
   },
 ];
 
-function CommunityLayout() {
-   const [searchTerm, setSearchTerm] = useState("");
-    const [status, setStatus] = useState("");
-    const [category, setCategory] = useState("");
-    const [dateReported, setDateReported] = useState("");
-    const [sortBy, setSortBy] = useState("newest");
+const CommunityLayout = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [status, setStatus] = useState("");
+  const [category, setCategory] = useState("");
+  const [dateReported, setDateReported] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
   const [issues, setIssues] = useState(initialIssues);
   const [filteredIssues, setFilteredIssues] = useState(initialIssues);
 
   const handleFilterChange = ({ searchTerm, status, category, dateReported, sortBy }) => {
     let filtered = [...issues];
-    console.log('called');
-    
-    // Apply search filter
+
     if (searchTerm) {
-      filtered = filtered.filter((issue) => issue.title.toLowerCase().includes(searchTerm.toLowerCase()));
+      filtered = filtered.filter((issue) =>
+        issue.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
-  
-    // Apply status filter
+
     if (status) {
       filtered = filtered.filter((issue) => issue.status === status);
     }
-  
-    // Apply category filter
+
     if (category) {
       filtered = filtered.filter((issue) => issue.category === category);
     }
-  
-    // Apply date filter
+
     if (dateReported) {
       filtered = filtered.filter((issue) => issue.date === dateReported);
     }
-  
-    // Apply sorting
+
     if (sortBy === "newest") {
-      filtered.sort((a, b) => new Date(b.dateReported) - new Date(a.dateReported));
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date)); 
     } else if (sortBy === "most-upvoted") {
-      filtered.sort((a, b) => b.likes - a.likes); // Use 'likes' instead of 'upvotes'
+      filtered.sort((a, b) => b.likes - a.likes);
     }
-  
-    console.log(filtered); // Log the filtered array
-  
-    // Update the state
+
+    // console.log(filtered);
     setFilteredIssues(filtered);
   };
-  
 
-  
+
   return (
     <>
-    <HeadingComponent />
-    <StatisticsLayout  initialIssues={initialIssues}/>
-    <SearchFilter onFilterChange={handleFilterChange} setSortBy={setSortBy} setDateReported={setDateReported} searchTerm={searchTerm} status={status} category={category} dateReported={dateReported} sortBy={sortBy} setCategory={setCategory} setSearchTerm={setSearchTerm} setStatus={setStatus}/>
-    <IssueGrid issues={filteredIssues} />
-
+      <HeadingComponent />
+      <StatisticsLayout initialIssues={initialIssues} />
+      <SearchFilter
+        onFilterChange={handleFilterChange}
+        setSortBy={setSortBy}
+        setDateReported={setDateReported}
+        searchTerm={searchTerm}
+        status={status}
+        category={category}
+        dateReported={dateReported}
+        sortBy={sortBy}
+        setCategory={setCategory}
+        setSearchTerm={setSearchTerm}
+        setStatus={setStatus}
+      />
+      <IssueGrid issues={filteredIssues} />
     </>
-  )
-}
+  );
+};
 
-export default CommunityLayout
+export default CommunityLayout;
+

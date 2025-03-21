@@ -10,14 +10,14 @@ const SearchIssue = ({ onSearch, onFilterChange }) => {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    onSearch(e.target.value); // Call the parent function to handle search
+    onSearch(e.target.value); 
   };
 
   const handleFilterChange = (e) => {
     const { name, checked } = e.target;
     setFilters((prevFilters) => {
       const updatedFilters = { ...prevFilters, [name]: checked };
-      onFilterChange(updatedFilters); // Call the parent function to handle filter change
+      onFilterChange(updatedFilters);
       return updatedFilters;
     });
   };

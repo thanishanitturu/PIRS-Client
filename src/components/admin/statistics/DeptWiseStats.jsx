@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
-// Sample department data
 const departmentData = [
   { dept: "Sanitation1", resolved: 40, pending: 30, unresolved: 15 },
   { dept: "Sanitation", resolved: 40, pending: 30, unresolved: 15 },
@@ -10,7 +9,6 @@ const departmentData = [
   { dept: "Roads & Transport", resolved: 100, pending: 20, unresolved: 18 },
 ];
 
-// Chart-friendly data
 const chartData = departmentData.map((dept) => ({
   name: dept.dept,
   Resolved: dept.resolved,

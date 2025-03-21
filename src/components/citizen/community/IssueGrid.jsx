@@ -1,95 +1,6 @@
 import React, { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { ThumbsUp, MessageSquare, MapPin, Calendar, Building, CheckCircle } from "lucide-react";
-// let  issues = [
-//   {
-//     id: 1,
-//     title: "Open Manhole on Main Street",
-//     date: "2025-01-25",
-//     location: "Main Street, City Center",
-//     category: "Roads",
-//     status: "Pending",
-//     image: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg",
-//     description: "An open manhole poses a serious hazard to pedestrians and vehicles.",
-//     comments: [
-//       { user: "John Doe", text: "This needs urgent attention!", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-//       { user: "Jane Smith", text: "Reported to the municipality.", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-//     ],
-//     likes: 10,
-//   },
-//   {
-//     id: 2,
-//     title: "Streetlight Not Working",
-//     date: "2025-01-20",
-//     location: "5th Avenue, Downtown",
-//     category: "Lighting",
-//     status: "Resolved",
-//     image: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg",
-//     description: "The streetlight on 5th Avenue was broken for weeks.",
-//     comments: [
-//       { user: "Alice Johnson", text: "It’s finally fixed!", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-//     ],
-//     likes: 5,
-//   },
-//   {
-//     id: 3,
-//     title: "Open Manhole on Main Street",
-//     date: "2025-01-25",
-//     location: "Main Street, City Center",
-//     category: "Roads",
-//     status: "Pending",
-//     image: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg",
-//     description: "An open manhole poses a serious hazard to pedestrians and vehicles.",
-//     comments: [
-//       { user: "John Doe", text: "This needs urgent attention!", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-//       { user: "Jane Smith", text: "Reported to the municipality.", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-//     ],
-//     likes: 10,
-//   },
-//   {
-//     id: 4,
-//     title: "Streetlight Not Working",
-//     date: "2025-01-20",
-//     location: "5th Avenue, Downtown",
-//     category: "Lighting",
-//     status: "Resolved",
-//     image: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg",
-//     description: "The streetlight on 5th Avenue was broken for weeks.",
-//     comments: [
-//       { user: "Alice Johnson", text: "It’s finally fixed!", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-//     ],
-//     likes: 5,
-//   },
-//   {
-//     id: 5,
-//     title: "Open Manhole on Main Street",
-//     date: "2025-01-25",
-//     location: "Main Street, City Center",
-//     category: "Roads",
-//     status: "Pending",
-//     image: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg",
-//     description: "An open manhole poses a serious hazard to pedestrians and vehicles.",
-//     comments: [
-//       { user: "John Doe", text: "This needs urgent attention!", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-//       { user: "Jane Smith", text: "Reported to the municipality.", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-//     ],
-//     likes: 10,
-//   },
-//   {
-//     id: 6,
-//     title: "Streetlight Not Working",
-//     date: "2025-01-20",
-//     location: "5th Avenue, Downtown",
-//     category: "Lighting",
-//     status: "Resolved",
-//     image: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg",
-//     description: "The streetlight on 5th Avenue was broken for weeks.",
-//     comments: [
-//       { user: "Alice Johnson", text: "It’s finally fixed!", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-//     ],
-//     likes: 5,
-//   },
-// ];
 
 const IssueGrid = ({issues}) => {
   const [selectedIssue, setSelectedIssue] = useState(null);
@@ -127,9 +38,7 @@ const IssueGrid = ({issues}) => {
         }
         return issue;
       });
-      // Update the issues array
       issues = updatedIssues;
-      // Clear the comment input field
       setNewComment("");
     }
   };

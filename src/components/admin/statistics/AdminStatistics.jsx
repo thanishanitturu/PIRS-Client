@@ -8,7 +8,6 @@ const AdminStatistics = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <AdminStatsTop />
-      {/* <GraphStats /> */}
       <DeptWiseStats />
     </div>
   );

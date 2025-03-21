@@ -4,14 +4,7 @@ import L from "leaflet";
 
 const MapComponent = ({issues
 }) => {
-  // Locations with category
-  // const locations = [
-  //   { position: [51.505, -0.09], status: "resolved" },
-  //   { position: [51.515, -0.1], status: "pending" },
-  //   { position: [51.525, -0.12], status: "unresolved" },
-  //   { position: [51.535, -0.13], status: "resolved" },
-  //   { position: [51.545, -0.14], status: "pending" },
-  // ];
+ 
   const locations = issues.map((issue)=>{
     return  { position: [issue.latitude, issue.longitude], status: issue.status }
   })
@@ -22,7 +15,6 @@ const MapComponent = ({issues
     Unresolved: false,
   });
 
-  // Handle checkbox change
   const handleCheckboxChange = (category) => {
     setSelectedCategories((prev) => ({
       ...prev,
@@ -30,27 +22,24 @@ const MapComponent = ({issues
     }));
   };
 
-  // Function to get the marker icon based on status
-  const getMarkerIcon = (status) => {
-    let iconColor = "#808080"; // Default color for unresolved
 
+  const getMarkerIcon = (status) => {
+    let iconColor = "#808080"; 
     if (status === "Resolved") {
-      iconColor = "#28a745"; // Green for resolved
+      iconColor = "#28a745"; 
     } else if (status === "Pending") {
-      iconColor = "#ffc107"; // Yellow for pending
+      iconColor = "#ffc107"; 
     }
 
-    // Create custom icon using L.divIcon
     return L.divIcon({
-      className: "custom-marker", // Custom CSS class for styling
+      className: "custom-marker", 
       html: `<div style="background-color: ${iconColor}; width: 20px; height: 30px; border-radius: 50% 50% 0 0; border: 2px solid #fff;"></div>`,
       iconSize: [20, 30],
-      iconAnchor: [10, 30], // Anchor the icon at the base
-      popupAnchor: [0, -30], // Position the popup above the marker
+      iconAnchor: [10, 30],
+      popupAnchor: [0, -30], 
     });
   };
 
-  // Filter locations based on selected categories
   const filteredLocations = locations.filter((location) => {
     return (
       selectedCategories[location.status] ||
@@ -66,7 +55,7 @@ const MapComponent = ({issues
 
       {/* Map */}
       <MapContainer
-        center={[51.505, -0.09]} // Centered at a default location
+        center={[51.505, -0.09]}
         zoom={13}
         style={{ height: "300px", width: "100%" }}
       >
@@ -75,7 +64,7 @@ const MapComponent = ({issues
           <Marker
             key={index}
             position={location.position}
-            icon={getMarkerIcon(location.status)} // Use the custom icon based on status
+            icon={getMarkerIcon(location.status)} 
           >
             <Popup>
               Reported Issue {index + 1} - {location.status}
@@ -84,7 +73,6 @@ const MapComponent = ({issues
         ))}
       </MapContainer>
 
-      {/* Category Checkboxes */}
       <div className="flex flex-row justify-center items-center gap-4 mt-4">
         <label className="flex items-center gap-2">
           <input
