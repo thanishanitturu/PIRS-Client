@@ -20,6 +20,7 @@ export default function DepartmentAdmin() {
   const [issueToDelete, setIssueToDelete] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editedStatus, setEditedStatus] = useState("");
+  const [resolutionDescription, setResolutionDescription] = useState("");
   const { role, setSnackbar, snackbar } = useContext(AppContext);
   const department = role.replace("DeptAdmin",""); // Corrected this line
   // Optional: Capitalize the department name
@@ -66,12 +67,12 @@ export default function DepartmentAdmin() {
     }, 1000);
   };
 
-  const handleEditStatus = (issueId, newStatus) => {
+  const handleEditStatus = (issueId, newStatus, resolutionDescription) => {
     setLoading(true);
     setTimeout(() => {  
       const updatedIssues = issues.map(issue => {
         if (issue.id === issueId) {
-          return { ...issue, status: newStatus };
+          return { ...issue, status: newStatus, resolutionDescription };
         }
         return issue;
       });
@@ -79,7 +80,15 @@ export default function DepartmentAdmin() {
       setIssues(updatedIssues);
       setLoading(false);
       setIsEditModalOpen(false);
+      sendEmailToUser(issueId, newStatus, resolutionDescription);
     }, 1000);
+  };
+
+  const sendEmailToUser = (issueId, newStatus, resolutionDescription) => {
+    const issue = issues.find(issue => issue.id === issueId);
+    const emailContent = `Your issue titled "${issue.title}" has been updated to status "${newStatus}". Resolution Description: ${resolutionDescription}`;
+    console.log(`Sending email to ${issue.reportedBy}: ${emailContent}`);
+    // Implement your email sending logic here
   };
 
   const formatDate = (dateString) => {
@@ -239,11 +248,17 @@ export default function DepartmentAdmin() {
                 <option value="In Progress">In Progress</option>
                 <option value="Resolved">Resolved</option>
               </select>
+              <textarea
+                value={resolutionDescription}
+                onChange={(e) => setResolutionDescription(e.target.value)}
+                placeholder="Describe how many days the issue will take to resolve..."
+                className="w-full p-2 border rounded"
+              />
             </div>
             <div className="mt-4 flex gap-2">
               <button
                 className="w-full bg-blue-500 text-white p-2 rounded"
-                onClick={() => handleEditStatus(selectedIssue.id, editedStatus)}
+                onClick={() => handleEditStatus(selectedIssue.id, editedStatus, resolutionDescription)}
               >
                 Save
               </button>
