@@ -31,7 +31,7 @@ const adminNavigation = [
 
 const departmentAdminNavigation = [
   { name: "Issues", href: "department/issues", current: false },
-  { name: "Statistics", href: "department/statistics", current: false },
+  { name: "Statistics", href: "department/dashboard", current: false },
 ];
 
 function classNames(...classes) {
