@@ -3,7 +3,8 @@ import React, { createContext, useState } from "react";
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [role, setRole] = useState("dept");
+  const [role, setRole] = useState(localStorage.getItem("role")|| "empty");
+  const [token,setToken] = useState(localStorage.getItem("uid") || null);
   const[deptName,setDeptName] = useState("water");
   const [snackbar, setSnackbar] = useState({ open:false, severity: "success", message: "" });
   
@@ -16,8 +17,9 @@ export const AppProvider = ({ children }) => {
     { id: 5, department: "Municipality", message: "Streetlight repair request is in progress.", time: "06:20 AM", date: "Jan 29, 2025", read: false },
   ]);
   
+  
   return (
-    <AppContext.Provider value={{role, setRole, snackbar, setSnackbar,notifications,setNotifications,deptName,setDeptName}}>
+    <AppContext.Provider value={{role, setRole, snackbar, setSnackbar,notifications,setNotifications,deptName,setDeptName,token,setToken}}>
       {children}
     </AppContext.Provider>
   );

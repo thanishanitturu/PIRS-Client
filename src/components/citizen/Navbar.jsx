@@ -30,9 +30,9 @@ const navigation2 = [
   { name: "Statistics", href: "/admin/statistics", current: false },
 ];
 
-const navigation3 = [
-  { name: "Issues", href: "/department/issues", current: true }, // Updated to absolute path
-  { name: "Dashboard", href: "/department/stats", current: false },
+const departmentAdminNavigation = [
+  { name: "Issues", href: "department/issues", current: false },
+  { name: "Statistics", href: "department/dashboard", current: false },
 ];
 
 
@@ -40,11 +40,13 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Navbar() {
-  const [token, setToken] = useState("");
+export default function Navbar({token}) {
   const navigate = useNavigate();
   const { role, notifications, setNotifications } = useContext(AppContext);
+
   const location = useLocation();
+
+ 
 
   const handleViewAll = () => {
     navigate("/notifications");
@@ -58,8 +60,8 @@ export default function Navbar() {
   };
 
   const updatedNavigation = updateNavigation(navigation);
-  const updatedNavigation2 = updateNavigation(navigation2);
-  const updatedNavigation3 = updateNavigation(navigation3);
+  const updatedAdminNavigation = updateNavigation(navigation2);
+  const updatedDepartmentAdminNavigation = updateNavigation(departmentAdminNavigation);
 
   const markAsRead = (id) => {
     setNotifications((prev) =>
@@ -100,7 +102,7 @@ export default function Navbar() {
                   <span className="ml-6 text-white text-xl font-semibold">PIRS</span>
                 </div>
                 <div className="hidden sm:flex justify-center space-x-4">
-                  {role === "user" &&
+                  {(role === "citizen" || role=="empty" )&&
                     updatedNavigation.map((item) => (
                       <Link
                         key={item.name}
@@ -116,7 +118,7 @@ export default function Navbar() {
                       </Link>
                     ))}
                   {role === "admin" &&
-                    updatedNavigation2.map((item) => (
+                    updatedAdminNavigation.map((item) => (
                       <Link
                         key={item.name}
                         to={item.href}
@@ -131,7 +133,7 @@ export default function Navbar() {
                       </Link>
                     ))}
                     {role === "dept" &&
-                    updatedNavigation3.map((item) => (
+                    updatedDepartmentAdminNavigation.map((item) => (
                       <Link
                         key={item.name}
                         to={item.href}
@@ -148,7 +150,7 @@ export default function Navbar() {
                 </div>
               </div>
 
-              {token ? (
+              {!token ? (
                 <button
                   onClick={() => navigate("/login")}
                   className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 ml-2"
@@ -205,12 +207,10 @@ export default function Navbar() {
 
                   {/* Profile Menu */}
                   <Menu as="div" className="relative ml-3">
-                    <MenuButton className="relative flex rounded-full bg-gray-800 text-sm">
-                      <img
-                        alt="User Profile"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        className="size-8 rounded-full"
-                      />
+                    <MenuButton className="relative flex rounded-full bg-gray-800 text-xl  border border-2 px-4 py-1">
+                     {role=='citizen' && <span  className="text-white">Citizen</span>}
+                     {role=='admin' && <span className="text-white">Admin</span>}
+                     {role=='dept' && <span className="text-white">Dept</span>}
                     </MenuButton>
                     <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg">
                       <MenuItem>
@@ -218,11 +218,7 @@ export default function Navbar() {
                           Your Profile
                         </Link>
                       </MenuItem>
-                      <MenuItem>
-                        <Link to="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                          Settings
-                        </Link>
-                      </MenuItem>
+                      
                       <MenuItem>
                         <Link to="/logout" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                           Sign out
@@ -238,7 +234,7 @@ export default function Navbar() {
           {/* Mobile Menu Panel */}
           <DisclosurePanel className="sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
-              {role === "user" &&
+              {role === "citizen" &&
                 updatedNavigation.map((item) => (
                   <Link
                     key={item.name}
@@ -254,7 +250,7 @@ export default function Navbar() {
                   </Link>
                 ))}
               {role === "admin" &&
-                updatedNavigation2.map((item) => (
+                updatedAdminNavigation.map((item) => (
                   <Link
                     key={item.name}
                     to={item.href}
@@ -269,7 +265,7 @@ export default function Navbar() {
                   </Link>
                 ))}
                  {role === "dept" &&
-                updatedNavigation3.map((item) => (
+              updatedDepartmentAdminNavigation.map((item) => (
                   <Link
                     key={item.name}
                     to={item.href}

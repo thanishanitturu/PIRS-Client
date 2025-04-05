@@ -1,19 +1,51 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {FaSpinner} from "react-icons/fa";
+
 import { loginUser } from '../../firebase/citizen/authFuncs';
+import { AppContext } from '../../context/AppContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('citizen'); // Default role
+  const [currRole, setCurrRole] = useState("citizen"); 
   const navigate = useNavigate();
+  const[loading,setLoading] = useState(false);
+  const{setSnackbar,token,setToken,setRole} = useContext(AppContext);
 
+
+  useEffect(()=>{
+      if(token){
+        navigate("/dashboard");
+      }
+  },[])
   // Handle login form submission
-  const handleLogin = async(e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("hello");
-      const response  = await loginUser(email,password);
-      console.log(response);
+    
+    setLoading(true);
+    setTimeout(async()=>{
+      try {
+        console.log("Login attempt with:", { email, password, currRole });
+        
+        const response = await loginUser(email, password, currRole);
+        console.log("Login successful:", response);
+        
+        // Store user data in localStorage
+        localStorage.setItem("role", response.role); // Note: response.data doesn't exist in our loginUser function
+        localStorage.setItem("uid", response.uid); // Store user ID as well
+        setRole(response.role);
+        setToken(response.uid);
+        
+        // Navigate to dashboard
+        setSnackbar({open:true,severity:"success",message:"Login Successfull..."})
+        navigate("/dashboard");
+      } catch (error) {
+        console.error("Login failed:", error.message);
+        setSnackbar({open:true,severity:"error",message:error.message});
+      }
+      setLoading(false);
+    },2000)
   };
 
   // Navigate to signup page
@@ -31,14 +63,14 @@ const LoginPage = () => {
             <label htmlFor="role" className="block text-gray-700">Select Role</label>
             <select
               id="role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
+              value={currRole}
+              onChange={(e) => setCurrRole(e.target.value)}
               className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             >
               <option value="admin">Admin</option>
               <option value="citizen">Citizen</option>
-              <option value="authority">Authority</option>
+              <option value="dept">Authority</option>
             </select>
           </div>
 
@@ -71,13 +103,22 @@ const LoginPage = () => {
           </div>
 
           {/* Login Button */}
-          <button
-            type="submit"
-            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onClick={handleLogin}
-          >
-            Login
-          </button>
+         
+          {
+  loading ? (
+    <div className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex justify-center items-center">
+      <FaSpinner className="animate-spin text-lg" />
+    </div>
+  ) : (
+    <button
+      type="submit"
+      className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      onClick={handleLogin}
+    >
+      Login
+    </button>
+  )
+}
         </form>
 
         {/* Sign Up Link */}

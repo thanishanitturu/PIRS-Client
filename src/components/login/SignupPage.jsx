@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { registerUser,loginUser } from '../../firebase/citizen/authFuncs';
+import { registerUser, loginUser } from '../../firebase/citizen/authFuncs';
+import axios from 'axios';
 
 const SignupPage = () => {
   const [role, setRole] = useState('citizen');
@@ -11,27 +12,82 @@ const SignupPage = () => {
   const [password, setPassword] = useState('');
   const [photo, setPhoto] = useState(null);
   const [department, setDepartment] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignUp = async () => {
+  const uploadImageToCloudinary = async () => {
+    const uploadData = new FormData();
+    uploadData.append("file", photo);
+    uploadData.append("upload_preset", "unsigned_upload");
+
+    try {
+      const response = await axios.post(
+        "https://api.cloudinary.com/v1_1/dkzzeiqhh/image/upload",
+        uploadData
+      );
+      return response.data.secure_url;
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      return null;
+    }
+  };
+
+
+  const handleSignUp = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    
     try {
       console.log("Signing up...");
-      const response = await registerUser(name, email, password, role, address, department, phone, photo);
+      
+      let photoUrl = '';
+      if (photo) {
+        photoUrl = await uploadImageToCloudinary();
+      }
+      
+      const response = await registerUser(
+        name, 
+        email, 
+        password, 
+        role, 
+        address, 
+        department, 
+        phone, 
+        photoUrl // Pass the Cloudinary URL instead of the file
+      );
+      
       console.log("Signup success:", response);
 
       if (response) {
+        // Optional: automatically log the user in after signup
+        await loginUser(email, password);
         navigate("/dashboard"); // Redirect user after successful signup
       }
     } catch (error) {
       console.error("Signup failed:", error.message);
       alert(error.message); // Display error message
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file type and size
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      
+      if (!validTypes.includes(file.type)) {
+        alert('Please upload a valid image file (JPEG, PNG, GIF)');
+        return;
+      }
+      
+      if (file.size > maxSize) {
+        alert('Image size should be less than 5MB');
+        return;
+      }
+      
       setPhoto(file);
     }
   };
@@ -105,6 +161,7 @@ const SignupPage = () => {
                 className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Create a password"
                 required
+                minLength="6"
               />
             </div>
           </div>
@@ -129,7 +186,7 @@ const SignupPage = () => {
               <input
                 type="text"
                 id="department"
-                value={department}
+                value={department || ''}
                 onChange={(e) => setDepartment(e.target.value)}
                 className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your department"
@@ -149,6 +206,7 @@ const SignupPage = () => {
                 accept="image/*"
                 required
               />
+              <p className="text-xs text-gray-500 mt-1">JPEG, PNG or GIF (Max 5MB)</p>
             </div>
             {photo && (
               <div className="flex items-center mt-4 sm:mt-0">
@@ -157,16 +215,17 @@ const SignupPage = () => {
                   alt="Profile Preview"
                   className="w-16 h-16 object-cover rounded-full"
                 />
-                <p className="ml-4 text-gray-500">{photo.name}</p>
+                <p className="ml-4 text-gray-500 truncate max-w-xs">{photo.name}</p>
               </div>
             )}
           </div>
 
           <button
             type="submit"
-            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            disabled={isLoading}
           >
-            Sign Up
+            {isLoading ? 'Signing Up...' : 'Sign Up'}
           </button>
         </form>
 

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Stepper, Step, StepLabel, Button, TextField, Box, Typography, InputLabel, Select, MenuItem, FormControl, FormHelperText } from '@mui/material';
 import MapWithMarker from '../../../utilities/MapWithMarker';
+import axios from 'axios';
+import { createReport } from '../../../firebase/citizen/reportFuncs';
 
 const IssueForm = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -22,6 +24,25 @@ const IssueForm = () => {
     setPhotoPreviews((prev) => [...prev, ...newPreviews]);
   };
 
+
+  const uploadImageToCloudinary = async (currphoto) => {
+    const uploadData = new FormData();
+    uploadData.append("file", currphoto);
+    uploadData.append("upload_preset", "unsigned_upload");
+
+    try {
+      const response = await axios.post(
+        "https://api.cloudinary.com/v1_1/dkzzeiqhh/image/upload",
+        uploadData
+      );
+      console.log(response.data.secure_url);
+      return response.data.secure_url;
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      return null;
+    }
+  };
+
   const handleNext = () => {
     setActiveStep((prevStep) => prevStep + 1);
   };
@@ -30,17 +51,22 @@ const IssueForm = () => {
     setActiveStep((prevStep) => prevStep - 1);
   };
 
-  const handleSubmit = () => {
-    const issueData = {
-      title,
-      description,
-      category,
-      department,
-      location,
-      photos,
-    };
-    console.log('Submitted Issue Data:', issueData);
-    alert('Issue Submitted Successfully!');
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+
+    const photoUrls = await Promise.all(
+      photos.map(async (photo) => {
+        return await uploadImageToCloudinary(photo);
+      })
+    );
+
+
+     try {
+        const response = await createReport(title,description,category,department,address,photoUrls);
+        console.log(response);
+     } catch (error) {
+      
+     }
   };
 
   const renderIssueDetails = () => (

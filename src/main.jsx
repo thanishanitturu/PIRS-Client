@@ -9,10 +9,9 @@ import { AppProvider } from './context/AppContext.jsx';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AppProvider>
-    <BrowserRouter  future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-     
-        <App />
-    </BrowserRouter>
+        <BrowserRouter  future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <App />
+        </BrowserRouter>
     </AppProvider>
   </StrictMode>
 );

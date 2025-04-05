@@ -20,17 +20,18 @@ import { AppContext } from './context/AppContext';
 import AdminStatistics from './components/admin/statistics/AdminStatistics';
 import ProfileLayout from './components/profile/ProfileLayout';
 import DepartmentAdmin from './components/individualAdmin/issues/DepartmentAdmin';
-import DepartmentPage from './components/department/DepartmentPage';
-import DeptStats from './components/department/stats/DeptStats';
-import DeptIssues from './components/department/issues/DeptIssues';
+import DepartmentDashboard from './components/individualAdmin/statistics/DepartmentDashboard'
+import LogoutPage from './components/login/LogoutPage';
 
 function App() {
   const { snackbar, setSnackbar } = useContext(AppContext);
 
+  const{token} = useContext(AppContext);
+
   return (
     <>
       <ScrollToTop />
-      <Navbar />
+      <Navbar  token={token} />
 
       <Routes>
         <Route path='/issue-report' element={<IssueForm />} />
@@ -45,8 +46,9 @@ function App() {
         <Route path='/admin/issues' element={<AdminIssues />} />
         <Route path='/admin/statistics' element={<AdminStatistics />} />
         <Route path='/profile' element={<ProfileLayout />} />
-        <Route path="/department/issues" element={<DeptIssues />} />
-        <Route path='/department/stats' element={<DeptStats />} />
+        <Route path="/department/issues" element={<DepartmentAdmin/>} />
+        <Route path="/department/dashboard" element={<DepartmentDashboard/>}/>
+        <Route path='/logout' element={<LogoutPage />} />
       </Routes>
       
       <Footer />
