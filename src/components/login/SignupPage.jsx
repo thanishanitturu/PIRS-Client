@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { registerUser,loginUser } from '../../firebase/citizen/authFuncs';
 
 const SignupPage = () => {
   const [role, setRole] = useState('citizen');
@@ -9,12 +10,23 @@ const SignupPage = () => {
   const [address, setAddress] = useState('');
   const [password, setPassword] = useState('');
   const [photo, setPhoto] = useState(null);
-  const [department, setDepartment] = useState('');
+  const [department, setDepartment] = useState(null);
   const navigate = useNavigate();
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async () => {
     e.preventDefault();
-    console.log('Signing up with:', { role, name, email, phone, address, password, photo, department });
+    try {
+      console.log("Signing up...");
+      const response = await registerUser(name, email, password, role, address, department, phone, photo);
+      console.log("Signup success:", response);
+
+      if (response) {
+        navigate("/dashboard"); // Redirect user after successful signup
+      }
+    } catch (error) {
+      console.error("Signup failed:", error.message);
+      alert(error.message); // Display error message
+    }
   };
 
   const handlePhotoChange = (e) => {

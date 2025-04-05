@@ -20,6 +20,9 @@ import { AppContext } from './context/AppContext';
 import AdminStatistics from './components/admin/statistics/AdminStatistics';
 import ProfileLayout from './components/profile/ProfileLayout';
 import DepartmentAdmin from './components/individualAdmin/issues/DepartmentAdmin';
+import DepartmentPage from './components/department/DepartmentPage';
+import DeptStats from './components/department/stats/DeptStats';
+import DeptIssues from './components/department/issues/DeptIssues';
 
 function App() {
   const { snackbar, setSnackbar } = useContext(AppContext);
@@ -42,7 +45,8 @@ function App() {
         <Route path='/admin/issues' element={<AdminIssues />} />
         <Route path='/admin/statistics' element={<AdminStatistics />} />
         <Route path='/profile' element={<ProfileLayout />} />
-        <Route path="/department/issues" element={<DepartmentAdmin/>} />
+        <Route path="/department/issues" element={<DeptIssues />} />
+        <Route path='/department/stats' element={<DeptStats />} />
       </Routes>
       
       <Footer />

@@ -3,7 +3,8 @@ import React, { createContext, useState } from "react";
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [role, setRole] = useState("TrafficDeptAdmin");
+  const [role, setRole] = useState("dept");
+  const[deptName,setDeptName] = useState("water");
   const [snackbar, setSnackbar] = useState({ open:false, severity: "success", message: "" });
   
 
@@ -16,7 +17,7 @@ export const AppProvider = ({ children }) => {
   ]);
   
   return (
-    <AppContext.Provider value={{role, setRole, snackbar, setSnackbar,notifications,setNotifications }}>
+    <AppContext.Provider value={{role, setRole, snackbar, setSnackbar,notifications,setNotifications,deptName,setDeptName}}>
       {children}
     </AppContext.Provider>
   );

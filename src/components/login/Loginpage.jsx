@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../../firebase/citizen/authFuncs';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -8,10 +9,11 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   // Handle login form submission
-  const handleLogin = (e) => {
+  const handleLogin = async(e) => {
     e.preventDefault();
-    // Handle login logic here, like authentication
-    console.log('Logging in with:', { email, password, role });
+    console.log("hello");
+      const response  = await loginUser(email,password);
+      console.log(response);
   };
 
   // Navigate to signup page
@@ -72,6 +74,7 @@ const LoginPage = () => {
           <button
             type="submit"
             className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onClick={handleLogin}
           >
             Login
           </button>
