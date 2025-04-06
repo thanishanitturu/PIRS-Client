@@ -33,9 +33,9 @@ const SearchFilter = ({ onFilterChange,searchTerm,setSearchTerm,category,setCate
         }}
       >
         <option value="">All Status</option>
-        <option value="Pending">Pending</option>
-        <option value="Unresolved">Unresolved</option>
-        <option value="Resolved">Resolved</option>
+        <option value="pending">Pending</option>
+        <option value="unresolved">Unresolved</option>
+        <option value="resolved">Resolved</option>
       </select>
 
       <select

@@ -1,21 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
+import { fetchUserReportsStatistics } from "../../../firebase/citizen/reportFuncs";
+import { useSVGOverlay } from "react-leaflet/SVGOverlay";
 
 const Contributors = () => {
+
+ 
+
   const contributors = [
     {
       icon: "👤",
       name: "John Doe",
-      info: "Reported 15 issues, resolved 10.",
+      info: "Reported 15 issues, Resolved 10",
     },
     {
       icon: "👤",
       name: "Jane Smith",
-      info: "Reported 12 issues, resolved 8.",
+      info: "Reported 15 issues, Resolved 10",
     },
     {
       icon: "👤",
       name: "Alice Johnson",
-      info: "Reported 10 issues, resolved 7.",
+      info: "Reported 15 issues, Resolved 10",
     },
   ];
 

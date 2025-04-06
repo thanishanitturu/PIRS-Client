@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Stepper, Step, StepLabel, Button, TextField, Box, Typography, InputLabel, Select, MenuItem, FormControl, FormHelperText } from '@mui/material';
 import MapWithMarker from '../../../utilities/MapWithMarker';
 import axios from 'axios';
 import { createReport } from '../../../firebase/citizen/reportFuncs';
+import { AppContext } from '../../../context/AppContext';
+import {FaSpinner} from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 const IssueForm = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -14,8 +17,10 @@ const IssueForm = () => {
   const [photoPreviews, setPhotoPreviews] = useState([]);
   const [position, setPosition] = useState(null);
    const [address, setAddress] = useState('Fetching address...');
-
+   const[loading,setLoading] = useState(false);
+  const{setSnackbar} = useContext(AppContext);
   const steps = ['Issue Details', 'Upload Photos', 'Add Location', 'Confirmation'];
+  const navigate = useNavigate();
 
   const handlePhotoChange = (e) => {
     const files = Array.from(e.target.files);
@@ -62,10 +67,19 @@ const IssueForm = () => {
 
 
      try {
-        const response = await createReport(title,description,category,department,address,photoUrls);
+        const response = await createReport(title,description,category,department,address,photoUrls,position);
         console.log(response);
+        setSnackbar({open:true,severity:"success",message:response});
+        setTitle("");
+        setAddress("");
+        setDepartment("");
+        setCategory("");
+        setPhotos([]);
+        setPhotoPreviews([]);
+        setDescription("");
+        navigate("/dashboard");
      } catch (error) {
-      
+        setSnackbar({open:true,severity:"error",message:error.message});
      }
   };
 
@@ -240,7 +254,7 @@ const IssueForm = () => {
           variant="contained"
           onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
         >
-          {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+          {activeStep === steps.length - 1 ?"Submit" : 'Next'}
         </Button>
       </Box>
     </Box>

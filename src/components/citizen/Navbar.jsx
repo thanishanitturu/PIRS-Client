@@ -208,9 +208,9 @@ export default function Navbar({token}) {
                   {/* Profile Menu */}
                   <Menu as="div" className="relative ml-3">
                     <MenuButton className="relative flex rounded-full bg-gray-800 text-xl  border border-2 px-4 py-1">
-                     {role=='citizen' && <span  className="text-white">Citizen</span>}
-                     {role=='admin' && <span className="text-white">Admin</span>}
-                     {role=='dept' && <span className="text-white">Dept</span>}
+                     {role=='citizen' && <span  className="text-white">C</span>}
+                     {role=='admin' && <span className="text-white">A</span>}
+                     {role=='dept' && <span className="text-white">D</span>}
                     </MenuButton>
                     <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg">
                       <MenuItem>

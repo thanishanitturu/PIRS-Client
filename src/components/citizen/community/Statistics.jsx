@@ -1,12 +1,19 @@
 import React from "react";
 
-const Statistics = () => {
+import { calculateIssueCounts } from "../../../utilities/utilities";
+
+const Statistics = ({initialIssues}) => {
+
+
+  const issueCounts  = calculateIssueCounts(initialIssues);
+
   const statistics = [
-    { icon: "📊", label: "Total Issues Raised", value: 150 },
-    { icon: "✅", label: "Resolved Issues", value: 85 },
-    { icon: "⏳", label: "In Progress", value: 40 },
-    { icon: "❌", label: "Unresolved Issues", value: 25 },
-  ];
+    { icon: "📊", label: "Total Issues", value: issueCounts.total },
+    { icon: "✅", label: "Resolved", value: issueCounts.resolved },
+    { icon: "🔄", label: "In Progress", value: issueCounts.progress },
+    { icon: "⏳", label: "Pending", value: issueCounts.pending },
+    { icon: "❌", label: "Unresolved", value: issueCounts.unresolved },
+];
 
   return (
     <div className="flex flex-col  rounded-lg p-6 w-full">

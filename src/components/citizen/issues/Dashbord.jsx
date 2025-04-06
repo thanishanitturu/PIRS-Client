@@ -3,6 +3,7 @@ import { LocationOn, AccessTime, CheckCircle, Pending,ThumbUp,Comment} from "@mu
 import SearchIssue from "./SearchIssue";
 
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
+import { getUserReports } from "../../../firebase/citizen/reportFuncs";
 
 const Dashboard = () => {
   const [issues, setIssues] = useState([]);
@@ -16,46 +17,49 @@ const Dashboard = () => {
   const [filteredIssues, setFilteredIssues] = useState([]);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-
-  const initialIssues = [
-    {
-      id: 1,
-      title: "Open Manhole on Main Street",
-      date: "2025-01-25",
-      location: "Main Street, City Center",
-      category: "Roads",
-      status: "Pending",
-      image: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg",
-      description: "An open manhole poses a serious hazard to pedestrians and vehicles.",
-      comments: [
-        { user: "John Doe", text: "This needs urgent attention!", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-        { user: "Jane Smith", text: "Reported to the municipality.", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-      ],
-      likes: 10,
-      latitude: 51.505,
-      longitude: -0.09,
-    },
-    {
-      id: 2,
-      title: "Streetlight Not Working",
-      date: "2025-01-20",
-      location: "5th Avenue, Downtown",
-      category: "Electricity",
-      status: "Resolved",
-      image: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg",
-      description: "The streetlight on 5th Avenue was broken for weeks.",
-      comments: [
-        { user: "Alice Johnson", text: "It’s finally fixed!", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-      ],
-      likes: 5,
-      latitude: 51.515,
-      longitude: -0.1,
-    },
-  ];
+  const[initialIssues,setInitialIssues] = useState([]);
+  console.log(localStorage.getItem('uid'));
+  // const initialIssues = [
+  //   {
+  //     id: 1,
+  //     title: "Open Manhole on Main Street",
+  //     date: "2025-01-25",
+  //     location: "Main Street, City Center",
+  //     category: "Roads",
+  //     status: "Pending",
+  //     image: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg",
+  //     description: "An open manhole poses a serious hazard to pedestrians and vehicles.",
+  //     comments: [
+  //       { user: "John Doe", text: "This needs urgent attention!", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
+  //       { user: "Jane Smith", text: "Reported to the municipality.", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
+  //     ],
+  //     likes: 10,
+  //     latitude: 51.505,
+  //     longitude: -0.09,
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Streetlight Not Working",
+  //     date: "2025-01-20",
+  //     location: "5th Avenue, Downtown",
+  //     category: "Electricity",
+  //     status: "Resolved",
+  //     image: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg",
+  //     description: "The streetlight on 5th Avenue was broken for weeks.",
+  //     comments: [
+  //       { user: "Alice Johnson", text: "It’s finally fixed!", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
+  //     ],
+  //     likes: 5,
+  //     latitude: 51.515,
+  //     longitude: -0.1,
+  //   },
+  // ];
 
   useEffect(() => {
-    setTimeout(() => {
-      setIssues(initialIssues);
+    setTimeout(async() => {
+      // setIssues(initialIssues);
+      const response = await getUserReports(localStorage.getItem("uid"));
+      setIssues(response);
       setLoading(false);
     }, 1500);
   }, []);
@@ -71,8 +75,8 @@ const Dashboard = () => {
 
     if (filters.pending || filters.resolved || filters.inProgress) {
       updatedIssues = updatedIssues.filter((issue) =>
-        (filters.pending && issue.status === "Pending") ||
-        (filters.resolved && issue.status === "Resolved") ||
+        (filters.pending && issue.status === "pending") ||
+        (filters.resolved && issue.status === "resolved") ||
         (filters.inProgress && issue.status === "In Progress")
       );
     }
@@ -121,19 +125,22 @@ const Dashboard = () => {
           onClick={() => handleIssueClick(issue)}
         >
           <h2 className="text-xl font-bold text-gray-700">{issue.title}</h2>
-          <p className="text-gray-600 mt-2">{issue.description}</p>
+          <p className="text-gray-600 mt-2">
+  {issue.description.length > 100 ? `${issue.description.slice(0, 100)}...` : issue.description}
+</p>
+
           <div className="mt-4">
             <span className="inline-block px-3 py-1 text-sm font-semibold text-blue-600 bg-blue-100 rounded-full">
               {issue.category}
             </span>
           </div>
           <p className="mt-4 text-gray-500 flex items-center">
-            <LocationOn className="text-gray-400 mr-2" />
-            {issue.location}
-          </p>
+  <LocationOn className="text-gray-400 mr-2" />
+  {issue.address.length > 50 ? `${issue.address.slice(0, 40)}...` : issue.address}
+</p>
           <p className="mt-2 text-gray-500 flex items-center">
             <AccessTime className="text-gray-400 mr-2" />
-            Reported on: {new Date(issue.date).toLocaleDateString()}
+            Reported on: {new Date(issue.reportedDate).toLocaleDateString()}
           </p>
         
           <div className="mt-4 flex items-center justify-between">
@@ -153,12 +160,12 @@ const Dashboard = () => {
             
             <div className="flex items-center">
               <p className="mr-4 flex items-center text-gray-500">
-                <ThumbUp className="text-gray-400 mr-2" />
-                {issue.likes} Likes
+               {issue.likeCount} &nbsp; <ThumbUp className="text-gray-400 mr-2" />
+                {/* {issue.likeCount} Likes */}
               </p>
               <p className="flex items-center text-gray-500">
-                <Comment className="text-gray-400 mr-2" />
-                {issue.comments.length} Comments
+               {issue.comments.length} &nbsp; <Comment className="text-gray-400 mr-2" />
+                {/* {issue.comments.length} Comments */}
               </p>
             </div>
           </div>
@@ -170,13 +177,17 @@ const Dashboard = () => {
       <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="md">
   <DialogTitle>{selectedIssue?.title}</DialogTitle>
   <DialogContent>
-    <div className="mb-4">
-      <img
-        src={selectedIssue?.image}
-        alt={selectedIssue?.title}
-        className="w-full h-64 object-cover rounded-md"
-      />
-    </div>
+  <div className="mb-4 grid grid-cols-2 md:grid-cols-2 gap-4">
+  {selectedIssue?.photoUrls?.map((url, index) => (
+    <img
+      key={index}
+      src={url}
+      alt={`${selectedIssue?.title} - ${index + 1}`}
+      className="w-full h-48 object-cover rounded-md"
+    />
+  ))}
+</div>
+
 
     <div className="flex items-center space-x-4 mt-2">
       <div className="flex items-center">
@@ -226,13 +237,13 @@ const Dashboard = () => {
         {selectedIssue?.comments.map((comment, index) => (
           <li key={index} className="mt-2 flex items-center">
             <img
-              src={comment.avatar}
-              alt={comment.user}
+              src={comment?.user?.avatar}
+              alt={comment?.user?.name}
               className="w-8 h-8 rounded-full mr-2"
             />
             <div>
-              <p className="font-semibold">{comment.user}</p>
-              <p className="text-gray-600">{comment.text}</p>
+              <p className="font-semibold">{comment?.user?.name}</p>
+              <p className="text-gray-600">{comment?.text}</p>
             </div>
           </li>
         ))}

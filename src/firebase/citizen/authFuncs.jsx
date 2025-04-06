@@ -71,5 +71,16 @@ const loginUser = async (email, password, requiredRole = null) => {
 };
 
 
+const getUserData = async (userId) => {
+  try {
+    const userDoc = await getDoc(doc(db, "users", userId));
+    return userDoc.exists() ? userDoc.data() : null;
+  } catch (error) {
+    console.error("Error fetching user:", userId, error);
+    return null;
+  }
+};
 
-export { registerUser, loginUser};
+
+
+export { registerUser, loginUser,getUserData};

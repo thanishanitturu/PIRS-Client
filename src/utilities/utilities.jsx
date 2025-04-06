@@ -20,4 +20,41 @@ export default function getLocationFromCoordinates(lat, lng) {
   
 //   // Example usage:
 //   getLocationFromCoordinates(12.9716, 77.5946); // Replace with your latitude and longitude
-  
+
+
+const calculateIssueCounts = (initialIssues) => {
+  // Initialize counters
+  const counts = {
+    total: 0,
+    pending: 0,
+    unresolved: 0,
+    resolved: 0,
+    progress:0
+  };
+
+  // Count each status
+  initialIssues.forEach(issue => {
+    counts.total++;
+    switch (issue.status) {
+      case 'pending':
+        counts.pending++;
+        break;
+      case 'progress':
+        counts.progress++;
+        break;
+      case 'unresolved':
+        counts.unresolved++;
+        break;
+      case 'resolved':
+        counts.resolved++;
+        break;
+      default:
+        // Handle any unexpected statuses
+        console.warn(`Unknown status: ${issue.status}`);
+    }
+  });
+
+  return counts;
+};
+
+export{calculateIssueCounts}

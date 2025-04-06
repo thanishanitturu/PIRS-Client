@@ -8,7 +8,7 @@ const StatisticsLayout = ({initialIssues}) => {
     <div className="flex flex-col md:flex-row bg-gray-50 text-gray-800 p-6 gap-6 w-full">
     {/* Left Side: Statistics */}
     <div className="w-full md:basis-2/12 border-l-4">
-      <Statistics />
+      <Statistics initialIssues={initialIssues} />
     </div>
   
     {/* Middle: Map */}

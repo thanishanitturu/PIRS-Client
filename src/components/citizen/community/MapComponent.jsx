@@ -6,8 +6,10 @@ const MapComponent = ({issues
 }) => {
  
   const locations = issues.map((issue)=>{
-    return  { position: [issue.latitude, issue.longitude], status: issue.status }
+    return  { position:[issue?.position[0],issue?.position[1]], status: issue.status }
   })
+
+  
 
   const [selectedCategories, setSelectedCategories] = useState({
     Resolved: false,

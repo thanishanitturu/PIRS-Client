@@ -1,12 +1,23 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
+import { getAllUserReports } from "../firebase/citizen/reportFuncs";
+import { setLogLevel } from "firebase/app";
+import { getUserData } from "../firebase/citizen/authFuncs";
 
 export const AppContext = createContext();
 
-export const AppProvider = ({ children }) => {
+export const AppProvider = async({ children }) => {
+  const[userData,setUserData] = useState("");
   const [role, setRole] = useState(localStorage.getItem("role")|| "empty");
   const [token,setToken] = useState(localStorage.getItem("uid") || null);
   const[deptName,setDeptName] = useState("water");
   const [snackbar, setSnackbar] = useState({ open:false, severity: "success", message: "" });
+  const[allReports,setAllReports] = useState([]);
+  const[isRender,setIsRender] = useState(false); 
+
+
+
+  
+
   
 
   const [notifications, setNotifications] = useState([
@@ -19,7 +30,7 @@ export const AppProvider = ({ children }) => {
   
   
   return (
-    <AppContext.Provider value={{role, setRole, snackbar, setSnackbar,notifications,setNotifications,deptName,setDeptName,token,setToken}}>
+    <AppContext.Provider value={{role, setRole, snackbar, setSnackbar,notifications,setNotifications,deptName,setDeptName,token,setToken,allReports,setAllReports,isRender,setIsRender}}>
       {children}
     </AppContext.Provider>
   );
