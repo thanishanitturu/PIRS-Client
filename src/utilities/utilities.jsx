@@ -1,3 +1,7 @@
+import { fetchUserReportsStatistics } from "../firebase/citizen/reportFuncs";
+
+
+
 export default function getLocationFromCoordinates(lat, lng) {
     const apiKey = 'AIzaSyDztVJVZA0AnuSe8sUEZaTrNB9VeOGbF4c';
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
@@ -18,8 +22,26 @@ export default function getLocationFromCoordinates(lat, lng) {
   }
 
   
-//   // Example usage:
-//   getLocationFromCoordinates(12.9716, 77.5946); // Replace with your latitude and longitude
+  const topThreeContributors = async () => {
+    try {
+        const res = await fetchUserReportsStatistics(); // res is array of users
+        if (!Array.isArray(res)) {
+            console.error('Unexpected data format', res);
+            return;
+        }
+
+        const sorted = res.sort((a, b) => {
+            return (b.stats.resolvingRatio || 0) - (a.stats.resolvingRatio || 0);
+        });
+
+        const topThree = sorted.slice(0, 3);
+
+        console.log('Top 3 Contributors:', topThree);
+        return topThree;
+    } catch (error) {
+        console.error('Error fetching top contributors:', error);
+    }
+};
 
 
 const calculateIssueCounts = (initialIssues) => {
@@ -57,4 +79,4 @@ const calculateIssueCounts = (initialIssues) => {
   return counts;
 };
 
-export{calculateIssueCounts}
+export{calculateIssueCounts,topThreeContributors}

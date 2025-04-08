@@ -6,11 +6,12 @@ const StatisticDisplay = ({ stats }) => {
   const navigate = useNavigate();
 
   const statistics = [
-    { icon: "📊", label: "Total Issues Raised", value: stats.totalIssues },
-    { icon: "✅", label: "Resolved Issues", value: stats.resolved },
-    { icon: "⏳", label: "In Progress", value: stats.inProgress },
-    { icon: "❌", label: "Unresolved Issues", value: stats.Pending },
-  ];
+    { icon: "📊", label: "Total Issues", value: stats?.total },
+    { icon: "✅", label: "Resolved", value: stats?.resolved },
+    { icon: "🔄", label: "In Progress", value: stats?.progress },
+    { icon: "⏳", label: "Pending", value: stats?.pending },
+    { icon: "❌", label: "Unresolved", value: stats?.unresolved },
+];
 
   return (
     <div className="p-6 rounded-lg border border-gray-200 w-full max-w-full mx-auto">

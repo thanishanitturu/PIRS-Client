@@ -1,32 +1,31 @@
 import React, { createContext, useEffect, useState } from "react";
-import { getAllUserReports } from "../firebase/citizen/reportFuncs";
-import { setLogLevel } from "firebase/app";
-import { getUserData } from "../firebase/citizen/authFuncs";
+import { getUserNotifications } from "../firebase/notifications/notifyFuncs";
 
 export const AppContext = createContext();
 
-export const AppProvider = async({ children }) => {
-  const[userData,setUserData] = useState("");
+export const AppProvider = ({ children }) => {
   const [role, setRole] = useState(localStorage.getItem("role")|| "empty");
   const [token,setToken] = useState(localStorage.getItem("uid") || null);
   const[deptName,setDeptName] = useState("water");
   const [snackbar, setSnackbar] = useState({ open:false, severity: "success", message: "" });
   const[allReports,setAllReports] = useState([]);
-  const[isRender,setIsRender] = useState(false); 
+  const[isRender,setIsRender] = useState(false);  
+  const[notifications,setNotifications] = useState([]);
 
+  useEffect(()=>{
+      
+    const getNofications = async()=>{
+        const res  = await getUserNotifications(localStorage.getItem("uid"));
+        console.log(res);
+        setNotifications(res);
+    }
 
+    getNofications();
+  },[]);
 
   
 
-  
 
-  const [notifications, setNotifications] = useState([
-    { id: 1, department: "Sanitation", message: "Your garbage collection issue  is under review.", time: "10:30 AM", date: "Jan 30, 2025", read: false },
-    { id: 2, department: "Electricity", message: "Power outage in your area has been reported.", time: "09:15 AM", date: "Jan 30, 2025", read: false },
-    { id: 3, department: "Water", message: "Your water leakage complaint is being addressed.", time: "08:45 AM", date: "Jan 30, 2025", read: false },
-    { id: 4, department: "Traffic", message: "Your traffic signal issue has been forwarded.", time: "07:30 AM", date: "Jan 29, 2025", read: false },
-    { id: 5, department: "Municipality", message: "Streetlight repair request is in progress.", time: "06:20 AM", date: "Jan 29, 2025", read: false },
-  ]);
   
   
   return (

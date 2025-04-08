@@ -1,11 +1,20 @@
-import React, { useContext, useState } from 'react';
-import { Stepper, Step, StepLabel, Button, TextField, Box, Typography, InputLabel, Select, MenuItem, FormControl, FormHelperText } from '@mui/material';
+import React, { useContext, useState,useEffect } from 'react';
+import { Stepper, Step, StepLabel, Button, TextField, Box, Typography, InputLabel, Select, MenuItem, FormControl, FormHelperText, Menu } from '@mui/material';
 import MapWithMarker from '../../../utilities/MapWithMarker';
 import axios from 'axios';
 import { createReport } from '../../../firebase/citizen/reportFuncs';
 import { AppContext } from '../../../context/AppContext';
 import {FaSpinner} from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
+import { getUserData } from '../../../firebase/citizen/authFuncs';
+const categoryDepartmentMap = {
+  'water issues': 'water_supply_department',
+  'electrical issues': 'electricity_board',
+  'waste_management': 'municipal_department',
+  'road problems': 'public_works_department',
+  'Traffic Problems': 'traffic_control_department',
+  'public parks': 'parks_department'
+};
 
 const IssueForm = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -21,6 +30,12 @@ const IssueForm = () => {
   const{setSnackbar} = useContext(AppContext);
   const steps = ['Issue Details', 'Upload Photos', 'Add Location', 'Confirmation'];
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (category && categoryDepartmentMap[category]) {
+      setDepartment(categoryDepartmentMap[category]);
+    }
+  }, [category]);
 
   const handlePhotoChange = (e) => {
     const files = Array.from(e.target.files);
@@ -67,7 +82,8 @@ const IssueForm = () => {
 
 
      try {
-        const response = await createReport(title,description,category,department,address,photoUrls,position);
+        const userData = await getUserData(localStorage.getItem("uid"));
+        const response = await createReport(title,description,category,department,address,photoUrls,position,userData);
         console.log(response);
         setSnackbar({open:true,severity:"success",message:response});
         setTitle("");
@@ -85,53 +101,57 @@ const IssueForm = () => {
 
   const renderIssueDetails = () => (
     <Box>
-      <TextField
-        label="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        fullWidth
-        required
-        sx={{ mb: 2 }}
-      />
-      <TextField
-        label="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        fullWidth
-        multiline
-        rows={4}
-        required
-        sx={{ mb: 2 }}
-      />
-      <FormControl fullWidth required sx={{ mb: 2 }}>
-        <InputLabel>Category</InputLabel>
-        <Select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          label="Category"
-        >
-          <MenuItem value="roads">Roads</MenuItem>
-          <MenuItem value="lighting">Lighting</MenuItem>
-          <MenuItem value="waste_management">Waste Management</MenuItem>
-          <MenuItem value="water_supply">Water Supply</MenuItem>
-          <MenuItem value="other">Other</MenuItem>
-        </Select>
-        <FormHelperText>Select the category of the issue</FormHelperText>
-      </FormControl>
-      <FormControl fullWidth required sx={{ mb: 2 }}>
-        <InputLabel>Department</InputLabel>
-        <Select
-          value={department}
-          onChange={(e) => setDepartment(e.target.value)}
-          label="Department"
-        >
-          <MenuItem value="municipal_corp">Municipal Corporation</MenuItem>
-          <MenuItem value="electricity_board">Electricity Board</MenuItem>
-          <MenuItem value="water_board">Water Board</MenuItem>
-        </Select>
-        <FormHelperText>Select the responsible department</FormHelperText>
-      </FormControl>
-    </Box>
+    <TextField
+      label="Title"
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+      fullWidth
+      required
+      sx={{ mb: 2 }}
+    />
+    <TextField
+      label="Description"
+      value={description}
+      onChange={(e) => setDescription(e.target.value)}
+      fullWidth
+      multiline
+      rows={4}
+      required
+      sx={{ mb: 2 }}
+    />
+    <FormControl fullWidth required sx={{ mb: 2 }}>
+      <InputLabel>Category</InputLabel>
+      <Select
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        label="Category"
+      >
+        <MenuItem value="water_issues">Water Issues</MenuItem>
+        <MenuItem value="electrical_issues">Electrical Issues</MenuItem>
+        <MenuItem value="waste_management">Waste Management</MenuItem>
+        <MenuItem value="road_problems">Road Problems</MenuItem>
+        <MenuItem value="traffic_problems">Traffic Problems</MenuItem>
+        <MenuItem value="public_parks">Public Parks</MenuItem>
+      </Select>
+      <FormHelperText>Select the category of the issue</FormHelperText>
+    </FormControl>
+    <FormControl fullWidth required sx={{ mb: 2 }}>
+      <InputLabel>Department</InputLabel>
+      <Select
+        value={department}
+        onChange={(e) => setDepartment(e.target.value)}
+        label="Department"
+      >
+        <MenuItem value="water_supply_department">Water Supply Department</MenuItem>
+        <MenuItem value="electricity_board">Electricity Board</MenuItem>
+        <MenuItem value="municipal_department">Municipal Department/Corporation</MenuItem>
+        <MenuItem value="public_works_department">Public Works Department</MenuItem>
+        <MenuItem value="traffic_control_department">Traffic Control Department</MenuItem>
+        <MenuItem value="parks_department">Parks and Recreation Department</MenuItem>
+      </Select>
+      <FormHelperText>Department will be auto-selected based on category</FormHelperText>
+    </FormControl>
+  </Box>
   );
 
   const renderPhotoUpload = () => (

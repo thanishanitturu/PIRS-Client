@@ -36,6 +36,7 @@ const SearchFilter = ({ onFilterChange,searchTerm,setSearchTerm,category,setCate
         <option value="pending">Pending</option>
         <option value="unresolved">Unresolved</option>
         <option value="resolved">Resolved</option>
+        <option value="progress">In Progress</option>
       </select>
 
       <select
@@ -46,11 +47,13 @@ const SearchFilter = ({ onFilterChange,searchTerm,setSearchTerm,category,setCate
        
         }}
       >
-        <option value="">All Categories</option>
-        <option value="Waste">Waste Management</option>
-        <option value="Roads">Roads</option>
-        <option value="Electricity">Electricity</option>
-        <option value="Water">Water Supply</option>
+       <option value="">All Categories</option>
+<option value="waste_management">Waste Management</option>
+<option value="road_problems">Road Problems</option>
+<option value="electrical_issues">Electrical Issues</option>
+<option value="water_issues">Water Issues</option>
+<option value="traffic_problems">Traffic Problems</option>
+<option value="public_parks">Public Parks</option>
       </select>
 
       <input

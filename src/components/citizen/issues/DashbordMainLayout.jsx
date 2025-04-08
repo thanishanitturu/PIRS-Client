@@ -1,18 +1,54 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Dashboard from './Dashbord'
 import StatisticDisplay from './StatisticDisplay'
-import { Pending } from '@mui/icons-material';
-
+import { calculateIssueCounts } from '../../../utilities/utilities';
+import { getUserReports } from '../../../firebase/citizen/reportFuncs';
+import { count } from 'firebase/firestore';
 function DashbordMainLayout() {
-  const issueStats = {
-    totalIssues: 100,
-    resolved: 40,
-    inProgress: 30,
-    Pending: 30,
-  };
+
+  const [userReports, setUserReports] = useState([]);
+  const [counts, setCounts] = useState({
+    total: 0,
+    pending: 0,
+    unresolved: 0,
+    resolved: 0,
+    progress: 0,
+  });
+
+  useEffect(() => {
+    const callGetUserReports = async () => {
+      const res = await getUserReports(localStorage.getItem("uid"));
+      console.log(res);
+      setUserReports(res);
+
+      // After fetching, calculate counts
+      const newCounts = {
+        total: res.length,
+        pending: 0,
+        unresolved: 0,
+        resolved: 0,
+        progress: 0,
+      };
+
+      res.forEach(report => {
+        if (report.status === 'pending') newCounts.pending++;
+        else if (report.status === 'unresolved') newCounts.unresolved++;
+        else if (report.status === 'resolved') newCounts.resolved++;
+        else if (report.status === 'in progress') newCounts.progress++;
+      });
+
+      setCounts(newCounts);
+    };
+
+    callGetUserReports();
+  }, []);
+
+
+
+ 
   return (
         <>
-            <StatisticDisplay stats={issueStats} />
+            <StatisticDisplay  stats={counts} />
             <Dashboard />
         </>
 )

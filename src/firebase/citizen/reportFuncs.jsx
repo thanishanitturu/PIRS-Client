@@ -1,4 +1,3 @@
-import { ReceiptPoundSterling } from "lucide-react";
 import { auth, db } from "../firebaseConfig";
 import { doc, setDoc, updateDoc, arrayUnion, getDoc,collection,getDocs,runTransaction } from "firebase/firestore";
 
@@ -9,7 +8,7 @@ const createReport = async (
   department = "General",
   address = null,
   photoUrls = [],
-  position
+  position,userData
 ) => {
   try {
     const user = auth.currentUser;
@@ -44,7 +43,7 @@ const createReport = async (
       reportedBy: {
         uid: user.uid,
         email: user.email || "",
-        name: user.displayName || "",
+        name: userData.name || "",
       },
       address,
       photoUrls,
@@ -58,6 +57,7 @@ const createReport = async (
       reportedDate: new Date().toISOString(),   
       lastUpdated: new Date().toISOString()      
     };
+    console.log(reportData);
 
     // Update the reports array with new report
     await updateDoc(userDocRef, {
@@ -72,8 +72,6 @@ const createReport = async (
     throw error;
   }
 };
-
-
 
 const getUserReports = async (userId) => {
   try {
@@ -92,7 +90,7 @@ const getUserReports = async (userId) => {
     const userData = userDocSnap.data();
     const reports = userData.reports || [];
 
-    console.log("✅ Reports fetched successfully:", reports);
+    // console.log("✅ Reports fetched successfully:", reports);
     return reports;
 
   } catch (error) {
@@ -100,7 +98,6 @@ const getUserReports = async (userId) => {
     throw error;
   }
 };
-
 
 const getAllUserReports = async () => {
   try {
@@ -118,7 +115,6 @@ const getAllUserReports = async () => {
       }
     });
 
-    console.log("✅ All user reports fetched:", allReports);
     return allReports;
 
   } catch (error) {
@@ -127,124 +123,139 @@ const getAllUserReports = async () => {
   }
 };
 
-
-
-const addCommentToReport = async (userId, reportId, commentText) => {
+const addCommentToReport = async (reportId, commentObj) => {
   try {
     const user = auth.currentUser;
     if (!user) {
       throw new Error("User not authenticated");
     }
 
-    if (!commentText.trim()) {
+    if (!commentObj?.text?.trim()) {
       throw new Error("Comment text cannot be empty");
     }
 
-    const userDocRef = doc(db, "reports", userId);
-    const userDocSnap = await getDoc(userDocRef);
+    const reportsCollectionRef = collection(db, "reports");
+    const snapshot = await getDocs(reportsCollectionRef);
 
-    if (!userDocSnap.exists()) {
-      throw new Error("User report document not found");
+    let found = false;
+
+    for (const docSnap of snapshot.docs) {
+      const userReports = docSnap.data().reports || [];
+      const reportIndex = userReports.findIndex(report => report.id === reportId);
+
+      if (reportIndex !== -1) {
+        found = true;
+
+        const updatedReport = {
+          ...userReports[reportIndex],
+          comments: [...(userReports[reportIndex].comments || []), commentObj],
+          commentCount: (userReports[reportIndex].commentCount || 0) + 1,
+          lastUpdated: new Date().toISOString()
+        };
+
+        const updatedReports = [...userReports];
+        updatedReports[reportIndex] = updatedReport;
+
+        const userDocRef = doc(db, "reports", docSnap.id);
+        await updateDoc(userDocRef, {
+          reports: updatedReports
+        });
+
+        console.log("✅ Comment successfully added to report!");
+        return updatedReport;
+      }
     }
 
-    // Get current reports array
-    const reports = userDocSnap.data().reports;
-    const reportIndex = reports.findIndex(report => report.id === reportId);
-
-    if (reportIndex === -1) {
-      throw new Error("Report not found");
+    if (!found) {
+      throw new Error("Report not found in any user's reports");
     }
-
-    // Create new comment object
-    const newComment = {
-      user: {
-        uid: user.uid,
-        name: user.displayName || "Anonymous",
-        email: user.email || "",
-        avatar: user.photoURL || "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg"
-      },
-      text: commentText,
-      timestamp: new Date().toISOString()
-    };
-
-    // Create updated report object
-    const updatedReport = {
-      ...reports[reportIndex],
-      comments: [...reports[reportIndex].comments, newComment],
-      commentCount: reports[reportIndex].commentCount + 1,
-      lastUpdated: new Date().toISOString()
-    };
-
-    // Create updated reports array
-    const updatedReports = [...reports];
-    updatedReports[reportIndex] = updatedReport;
-
-    // Update the document with the new reports array
-    await updateDoc(userDocRef, {
-      reports: updatedReports
-    });
-
-    console.log("✅ Comment successfully added to report!");
-    return updatedReport;
 
   } catch (error) {
     console.error("❌ Error adding comment:", error.message);
     throw error;
   }
 };
-const updateLikeStatus = async (userId, reportId, likeAction) => {
+
+const updateLikeStatus = async (reportId, likeAction) => {
   try {
-    // 1. Get reference to the user's document
-    const userDocRef = doc(db, "reports", userId);
-    console.log(reportId);
-    
-    // 2. Use transaction to ensure data consistency
+    const user = auth.currentUser;
+    if (!user) throw new Error("User not authenticated");
+
+    const userUid = user.uid;
+
+    // Step 1: Fetch all documents inside "reports" collection
+    const reportsCollectionRef = collection(db, "reports");
+    const snapshot = await getDocs(reportsCollectionRef);
+
+    let found = false;
+    let targetUserDocId = null;
+    let targetReportIndex = -1;
+
+    // Step 2: Search for the report inside every user document
+    for (const docSnap of snapshot.docs) {
+      const reportsArray = docSnap.data().reports || [];
+      const index = reportsArray.findIndex(report => report.id === reportId);
+
+      if (index !== -1) {
+        found = true;
+        targetUserDocId = docSnap.id;
+        targetReportIndex = index;
+        break;
+      }
+    }
+
+    if (!found) {
+      throw new Error("Report not found");
+    }
+
+    // Step 3: Now we know which user doc contains the report
+    const userDocRef = doc(db, "reports", targetUserDocId);
+
+    // Step 4: Run transaction to update like
     await runTransaction(db, async (transaction) => {
       const userDoc = await transaction.get(userDocRef);
-      if (!userDoc.exists()) throw new Error("User not found");
-      
+      if (!userDoc.exists()) throw new Error("User document disappeared!");
+
       const reports = userDoc.data().reports || [];
-      const reportIndex = reports.findIndex(r => r.id === reportId);
-      if (reportIndex === -1) throw new Error("Report not found");
-      
-      const report = reports[reportIndex];
+      const report = reports[targetReportIndex];
+
       const likedBy = report.likedBy || [];
-      const isLiked = likedBy.includes(userId);
-      
-      // Only proceed if the action changes the current state
+      const isLiked = likedBy.includes(userUid);
+
       if ((likeAction && !isLiked) || (!likeAction && isLiked)) {
         const updatedReport = {
           ...report,
-          likeCount: likeAction 
-            ? (report.likeCount || 0) + 1 
+          likeCount: likeAction
+            ? (report.likeCount || 0) + 1
             : Math.max((report.likeCount || 0) - 1, 0),
           likedBy: likeAction
-            ? [...likedBy, userId]
-            : likedBy.filter(id => id !== userId),
+            ? [...likedBy, userUid]
+            : likedBy.filter(id => id !== userUid),
           lastUpdated: new Date().toISOString()
         };
-        
+
         const updatedReports = [...reports];
-        updatedReports[reportIndex] = updatedReport;
-        
+        updatedReports[targetReportIndex] = updatedReport;
+
         transaction.update(userDocRef, { reports: updatedReports });
       }
     });
-    console.log("succesed liked");
+
+    console.log("✅ Successfully updated like status");
     return { success: true };
+
   } catch (error) {
-    console.error("Error updating like status:", error);
+    console.error("❌ Error updating like status:", error.message);
     return { success: false, error: error.message };
   }
 };
 
-
 const fetchUserReportsStatistics = async () => {
   try {
-    // 1. Fetch all documents from the reports collection
+   
     const querySnapshot = await getDocs(collection(db, "reports"));
     
-    // 2. Process each user's reports
+   
     const usersStats = querySnapshot.docs.map(doc => {
       const userData = doc.data();
       const reports = userData.reports || [];

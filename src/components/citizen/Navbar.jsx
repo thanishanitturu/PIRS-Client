@@ -63,16 +63,10 @@ export default function Navbar({token}) {
   const updatedAdminNavigation = updateNavigation(navigation2);
   const updatedDepartmentAdminNavigation = updateNavigation(departmentAdminNavigation);
 
-  const markAsRead = (id) => {
-    setNotifications((prev) =>
-      prev.map((notif) =>
-        notif.id === id ? { ...notif, read: true } : notif
-      )
-    );
-  };
+ 
 
   // Filter only unread notifications
-  const unreadNotifications = notifications.filter((notif) => !notif.read);
+  const unreadNotifications = notifications.filter((notif) => !notif.isRead);
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -183,7 +177,10 @@ export default function Navbar({token}) {
                                 unreadNotifications.map((notification, index) => (
                                   <div key={index} className="p-2 border-b text-gray-700">
                                     <strong className="text-blue-600">{notification.department}</strong>: {notification.message}
-                                    <div className="text-xs text-gray-500">{notification.date} at {notification.time}</div>
+                                    <div className="text-xs text-gray-500">
+  {notification?.timestamp && new Date(notification.timestamp).toLocaleString()}
+</div>
+
                                   </div>
                                 ))
                               ) : (

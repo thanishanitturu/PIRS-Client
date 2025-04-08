@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { LocationOn, AccessTime, CheckCircle, Pending,ThumbUp,Comment} from "@mui/icons-material";
 import SearchIssue from "./SearchIssue";
-
+import { Loader } from "lucide-react";
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
 import { getUserReports } from "../../../firebase/citizen/reportFuncs";
 
@@ -19,45 +19,9 @@ const Dashboard = () => {
   const [openModal, setOpenModal] = useState(false);
   const[initialIssues,setInitialIssues] = useState([]);
   console.log(localStorage.getItem('uid'));
-  // const initialIssues = [
-  //   {
-  //     id: 1,
-  //     title: "Open Manhole on Main Street",
-  //     date: "2025-01-25",
-  //     location: "Main Street, City Center",
-  //     category: "Roads",
-  //     status: "Pending",
-  //     image: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg",
-  //     description: "An open manhole poses a serious hazard to pedestrians and vehicles.",
-  //     comments: [
-  //       { user: "John Doe", text: "This needs urgent attention!", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-  //       { user: "Jane Smith", text: "Reported to the municipality.", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-  //     ],
-  //     likes: 10,
-  //     latitude: 51.505,
-  //     longitude: -0.09,
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Streetlight Not Working",
-  //     date: "2025-01-20",
-  //     location: "5th Avenue, Downtown",
-  //     category: "Electricity",
-  //     status: "Resolved",
-  //     image: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg",
-  //     description: "The streetlight on 5th Avenue was broken for weeks.",
-  //     comments: [
-  //       { user: "Alice Johnson", text: "It’s finally fixed!", avatar: "https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" },
-  //     ],
-  //     likes: 5,
-  //     latitude: 51.515,
-  //     longitude: -0.1,
-  //   },
-  // ];
-
+  
   useEffect(() => {
     setTimeout(async() => {
-      // setIssues(initialIssues);
       const response = await getUserReports(localStorage.getItem("uid"));
       setIssues(response);
       setLoading(false);
@@ -73,11 +37,12 @@ const Dashboard = () => {
       );
     }
 
-    if (filters.pending || filters.resolved || filters.inProgress) {
+    if (filters.pending || filters.resolved || filters.progress || filters.unresolved) {
       updatedIssues = updatedIssues.filter((issue) =>
         (filters.pending && issue.status === "pending") ||
         (filters.resolved && issue.status === "resolved") ||
-        (filters.inProgress && issue.status === "In Progress")
+        (filters.progress && issue.status === "progress") || 
+        (filters.unresolved && issue.status==="unresolved")
       );
     }
 
@@ -104,9 +69,15 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-xl font-semibold">Loading issues...</div>
+      <div 
+      className="flex items-center justify-center min-h-[60vh] w-full bg-gray-50 rounded-lg p-6"
+      style={{ minHeight: '70vh' }} // Fallback for older browsers
+    >
+      <div className="flex flex-col items-center">
+        <Loader className="animate-spin h-12 w-12 text-blue-600 mb-4" />
+        <p className="text-lg text-gray-700">Loading your Reports...</p>
       </div>
+    </div>
     );
   }
 

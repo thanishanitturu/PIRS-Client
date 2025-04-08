@@ -5,7 +5,8 @@ const SearchIssue = ({ onSearch, onFilterChange }) => {
   const [filters, setFilters] = useState({
     pending: false,
     resolved: false,
-    inProgress: false,
+    progress: false,
+    unresolved:false,
   });
 
   const handleSearchChange = (e) => {
@@ -67,14 +68,27 @@ const SearchIssue = ({ onSearch, onFilterChange }) => {
           <div className="flex items-center">
             <input
               type="checkbox"
-              id="inProgress"
-              name="inProgress"
-              checked={filters.inProgress}
+              id="progress"
+              name="progress"
+              checked={filters.progress}
               onChange={handleFilterChange}
               className="mr-2"
             />
-            <label htmlFor="inProgress" className="text-gray-700">
+            <label htmlFor="progress" className="text-gray-700">
               In Progress
+            </label>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="unresolved"
+              name="unresolved"
+              checked={filters.unresolved}
+              onChange={handleFilterChange}
+              className="mr-2"
+            />
+            <label htmlFor="unresolved" className="text-gray-700">
+             Unresolved
             </label>
           </div>
         </div>
