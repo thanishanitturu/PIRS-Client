@@ -3,8 +3,8 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword,signOut
 } from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { doc, setDoc, getDoc,updateDoc } from "firebase/firestore";
 
 const registerUser = async (name, email, password, role, address, department, phone, photo) => {
   try {
@@ -81,6 +81,28 @@ const getUserData = async (userId) => {
   }
 };
 
+const updateUserProfile = async (uid, updatedData) => {
+  try {
+    if (!uid) {
+      throw new Error("User ID is required for updating profile.");
+    }
 
+    // 1. Reference to the user's document
+    const userRef = doc(db, "users", uid);
 
-export { registerUser, loginUser,getUserData};
+    // 2. Update fields
+    await updateDoc(userRef, {
+      ...updatedData,
+      updatedAt: new Date().toISOString(), // Optional: track last update time
+    });
+
+    console.log("User profile updated successfully!");
+    return true; // or return some status if you want
+
+  } catch (error) {
+    console.error("Error updating user profile:", error.message);
+    throw error;
+  }
+};
+
+export { registerUser, loginUser,getUserData,updateUserProfile};

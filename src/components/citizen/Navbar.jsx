@@ -231,7 +231,7 @@ export default function Navbar({token}) {
           {/* Mobile Menu Panel */}
           <DisclosurePanel className="sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
-              {role === "citizen" &&
+              {(role === "citizen" || role==='empty') &&
                 updatedNavigation.map((item) => (
                   <Link
                     key={item.name}

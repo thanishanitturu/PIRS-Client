@@ -4,7 +4,7 @@ import { getUserData } from "../../../firebase/citizen/authFuncs";
 import { Loader } from "lucide-react";
 
 const Contributors = () => {
-  const [contributors, setContributors] = useState(null); // Initialize as null for loading state
+  const [contributors, setContributors] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const Contributors = () => {
           stats.map(async (userStat) => {
             const userData = await getUserData(userStat.userId);
             return {
-              photo: userData?.photoURL || "https://via.placeholder.com/40",
+              photo: userData?.photoURL || `https://via.placeholder.com/40?text=${encodeURIComponent(userData?.name?.charAt(0) || "U")}`,
               name: userData?.name || "Unknown",
               totalIssues: userStat.stats.total,
               resolvedIssues: userStat.stats.resolved,
@@ -72,6 +72,10 @@ const Contributors = () => {
                 src={contributor.photo}
                 alt={contributor.name}
                 className="w-14 h-14 rounded-full object-cover border-2 border-blue-500"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = `https://via.placeholder.com/40?text=${encodeURIComponent(contributor.name?.charAt(0) || "U")}`;
+                }}
               />
               <div className="flex flex-col">
                 <p className="text-lg font-semibold">{contributor.name}</p>

@@ -22,11 +22,20 @@ const IssueGrid = ({ issues,setIssues,setFilteredIssues }) => {
     setUserLiked(initialLikedState);
   }, [issues]);
 
-
   const handleLike = async (reportId) => {
     const userId = localStorage.getItem('uid');
+  
+    if (!userId) {
+      setSnackbar({
+        open: true,
+        message: "You must be logged in to like a report.",
+        severity: "warning", // or "error", based on your design
+      });
+      return; // Stop the function here
+    }
+  
     const currentlyLiked = userLiked[reportId];
-
+  
     // Optimistic UI update
     setUserLiked(prev => ({ ...prev, [reportId]: !currentlyLiked }));
     setIssues(prev => prev.map(issue => 
@@ -38,7 +47,7 @@ const IssueGrid = ({ issues,setIssues,setFilteredIssues }) => {
           : [...(issue.likedBy || []), userId]
       } : issue
     ));
-
+  
     try {
       // Update in Firebase
       const result = await updateLikeStatus(reportId, !currentlyLiked);
@@ -47,7 +56,7 @@ const IssueGrid = ({ issues,setIssues,setFilteredIssues }) => {
         // Revert if failed
         revertLikeUpdate(reportId, currentlyLiked);
       }
-
+  
       // Refresh data
       const freshData = await getAllUserReports();
       setAllReports(freshData);
@@ -57,6 +66,7 @@ const IssueGrid = ({ issues,setIssues,setFilteredIssues }) => {
       revertLikeUpdate(reportId, currentlyLiked);
     }
   };
+  
 
 
   const revertLikeUpdate = async(reportId, wasLiked) => {

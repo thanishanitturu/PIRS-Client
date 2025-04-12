@@ -22,6 +22,7 @@ import ProfileLayout from './components/profile/ProfileLayout';
 import DepartmentAdmin from './components/individualAdmin/issues/DepartmentAdmin';
 import DepartmentDashboard from './components/individualAdmin/statistics/DepartmentDashboard'
 import LogoutPage from './components/login/LogoutPage';
+import ProtectedRoute from './utilities/ProtectedRoute';
 
 function App() {
   const { snackbar, setSnackbar } = useContext(AppContext);
@@ -34,18 +35,18 @@ function App() {
       <Navbar  token={token} />
 
       <Routes>
-        <Route path='/issue-report' element={<IssueForm />} />
+        <Route path='/issue-report' element={<ProtectedRoute token={token} setSnackbar={setSnackbar}> <IssueForm /></ProtectedRoute>} />
         <Route path='/about' element={<AboutPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/register' element={<SignupPage />} />
         <Route path='/' element={<Homepage />} />
         <Route path='/notifications' element={<Notifyall />} />
-        <Route path='/dashboard' element={<DashbordMainLayout />} />
+        <Route path='/dashboard' element={<ProtectedRoute token={token} setSnackbar={setSnackbar} ><DashbordMainLayout /> </ProtectedRoute>} />
         <Route path='/community' element={<CommunityLayout />} />
         <Route path='/admin/users' element={<AdminUsers />} />
         <Route path='/admin/issues' element={<AdminIssues />} />
         <Route path='/admin/statistics' element={<AdminStatistics />} />
-        <Route path='/profile' element={<ProfileLayout />} />
+        <Route path='/profile' element={<ProtectedRoute token={token} setSnackbar={setSnackbar}><ProfileLayout/></ProtectedRoute>} />
         <Route path="/department/issues" element={<DepartmentAdmin/>} />
         <Route path="/department/dashboard" element={<DepartmentDashboard/>}/>
         <Route path='/logout' element={<LogoutPage />} />
