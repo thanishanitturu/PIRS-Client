@@ -79,4 +79,24 @@ const calculateIssueCounts = (initialIssues) => {
   return counts;
 };
 
-export{calculateIssueCounts,topThreeContributors}
+
+const generateDepartmentEmail = (department) => {
+  if (department.includes('water')) {
+    return 'pirs_water_dept@gmail.com';
+  } else if (department.includes('traffic')) {
+    return 'pirs_traffic_dept@gmail.com';
+  } else if (department.includes('electricity')) {
+    return 'pirs_electricity_dept@gmail.com';
+  } else if (department.includes('municipal')) {
+    return 'pirs_municipal_dept@gmail.com';
+  } else if (department.includes('public_works')) {
+    return 'pirs_publicworks_dept@gmail.com';
+  } else if (department.includes('parks')) {
+    return 'pirs_parks_dept@gmail.com';
+  } else {
+    return 'pirs_general_dept@gmail.com'; // fallback
+  }
+};
+
+
+export{calculateIssueCounts,topThreeContributors,generateDepartmentEmail}

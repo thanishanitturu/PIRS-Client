@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Dashboard from './Dashbord'
 import StatisticDisplay from './StatisticDisplay'
-import { calculateIssueCounts } from '../../../utilities/utilities';
 import { getUserReports } from '../../../firebase/citizen/reportFuncs';
-import { count } from 'firebase/firestore';
 function DashbordMainLayout() {
 
   const [userReports, setUserReports] = useState([]);

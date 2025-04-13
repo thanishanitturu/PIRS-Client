@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import './App.css';
 import "font-awesome/css/font-awesome.min.css";
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate,Navigate} from 'react-router-dom';
 import Navbar from './components/citizen/Navbar';
 import DashbordMainLayout from './components/citizen/issues/DashbordMainLayout';
 import IssueForm from './components/citizen/issues/IssueForm';
@@ -26,8 +26,7 @@ import ProtectedRoute from './utilities/ProtectedRoute';
 
 function App() {
   const { snackbar, setSnackbar } = useContext(AppContext);
-
-  const{token} = useContext(AppContext);
+  const{token,role} = useContext(AppContext);
 
   return (
     <>
@@ -35,6 +34,8 @@ function App() {
       <Navbar  token={token} />
 
       <Routes>
+      { role==="admin" && <Route path="/" element={<Navigate to="/admin/issues" replace />} />}
+      {role==="dept" && <Route path='/' element={<Navigate to="/department/issues" replace />} />}
         <Route path='/issue-report' element={<ProtectedRoute token={token} setSnackbar={setSnackbar}> <IssueForm /></ProtectedRoute>} />
         <Route path='/about' element={<AboutPage />} />
         <Route path='/login' element={<LoginPage />} />
@@ -43,6 +44,7 @@ function App() {
         <Route path='/notifications' element={<Notifyall />} />
         <Route path='/dashboard' element={<ProtectedRoute token={token} setSnackbar={setSnackbar} ><DashbordMainLayout /> </ProtectedRoute>} />
         <Route path='/community' element={<CommunityLayout />} />
+      
         <Route path='/admin/users' element={<AdminUsers />} />
         <Route path='/admin/issues' element={<AdminIssues />} />
         <Route path='/admin/statistics' element={<AdminStatistics />} />

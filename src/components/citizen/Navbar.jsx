@@ -24,8 +24,7 @@ const navigation = [
 ];
 
 const navigation2 = [
-  { name: "Home", href: "/", current: true },
-  { name: "Issues", href: "/admin/issues", current: false }, // Updated to absolute path
+  { name: "Issues", href: "/admin/issues", current: true }, // Set Issues as current
   { name: "Users", href: "/admin/users", current: false },
   { name: "Statistics", href: "/admin/statistics", current: false },
 ];

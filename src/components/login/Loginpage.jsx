@@ -4,6 +4,7 @@ import {FaSpinner} from "react-icons/fa";
 
 import { loginUser } from '../../firebase/citizen/authFuncs';
 import { AppContext } from '../../context/AppContext';
+import { NavigationOff } from 'lucide-react';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -39,7 +40,12 @@ const LoginPage = () => {
         
         // Navigate to dashboard
         setSnackbar({open:true,severity:"success",message:"Login Successfull..."})
-        navigate("/dashboard");
+        if(currRole === "admin")
+            navigate("/");
+        else if(currRole==="dept")
+            navigate("/");
+        else  
+            navigate("/dashboard");
       } catch (error) {
         console.error("Login failed:", error.message);
         setSnackbar({open:true,severity:"error",message:error.message});

@@ -1,13 +1,12 @@
-export const authorities = [
-    { id: 1, name: "Alice Johnson", email: "alice@example.com", password: "auth123", phoneNumber: "9988776655", department: "Health", role: "authority" },
-    { id: 2, name: "Robert Smith", email: "robert@example.com", password: "secure456", phoneNumber: "8877665544", department: "Transport", role: "authority" }
-  ];
-  
+import { deleteUserAccount } from "../../../firebase/admin/manageUserFuncs";
+
   export const deleteAuthority = (id, setAuthorities, setDelAuthLoading, closeDeleteModal, setSnackbar) => {
     setDelAuthLoading(true);
-    
-    setTimeout(() => {
+    console.log(id)
+    setTimeout(async() => {
       setAuthorities((prevAuthorities) => prevAuthorities.filter(authority => authority.id !== id));
+      const res = await deleteUserAccount(id);
+      console.log(res);
       setDelAuthLoading(false);
       closeDeleteModal(); 
   
