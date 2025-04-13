@@ -1,41 +1,77 @@
 import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { getUserByDepartment,sendNotificationToUser } from "../../../firebase/admin/manageUserFuncs";
 
-const departmentData = [
-  { dept: "Sanitation1", resolved: 40, pending: 30, unresolved: 15 },
-  { dept: "Sanitation", resolved: 40, pending: 30, unresolved: 15 },
-  { dept: "Electrical", resolved: 90, pending: 25, unresolved: 10 },
-  { dept: "Water Supply", resolved: 20, pending: 35, unresolved: 12 },
-  { dept: "Roads & Transport", resolved: 100, pending: 20, unresolved: 18 },
-];
-
-const chartData = departmentData.map((dept) => ({
-  name: dept.dept,
-  Resolved: dept.resolved,
-  Pending: dept.pending,
-  Unresolved: dept.unresolved,
-}));
-
-export default function DeptWiseStats() {
+export default function DeptWiseStats({ departmentData ,setSnackbar}) {
+ 
+  
   const [hoveredDept, setHoveredDept] = useState(null);
 
-  // Function to calculate resolving ratio
-  const getResolvingRatio = (resolved, pending, unresolved) => {
-    const total = resolved + pending + unresolved;
+  const chartData = departmentData.map((dept) => ({
+    name: dept.department,
+    Resolved: dept.resolved,
+    Pending: dept.pending,
+    Progress: dept.progress,
+    Unresolved: dept.unresolved,
+  }));
+  // console.log(getUserByDepartment)
+  // Calculate maximum value across all categories for YAxis ticks
+  const maxValue = Math.max(
+    ...departmentData.map(dept => 
+      Math.max(dept.resolved, dept.pending, dept.progress, dept.unresolved)
+    )
+  );
+
+  // Generate integer ticks from 0 to maxValue
+  const generateTicks = () => {
+    const ticks = [];
+    const step = Math.ceil(maxValue / 10); // Aim for about 10 ticks
+    for (let i = 0; i <= maxValue; i += step) {
+      ticks.push(i);
+    }
+    // Ensure maxValue is included if not already
+    if (ticks[ticks.length - 1] < maxValue) {
+      ticks.push(maxValue);
+    }
+    return ticks;
+  };
+
+  const getResolvingRatio = (resolved, pending, unresolved, progress) => {
+    const total = resolved + pending + unresolved + progress;
     return total > 0 ? (resolved / total) * 100 : 0;
   };
 
-  // Dummy function to send email (Replace with actual email logic)
-  const notifyDepartment = (deptName) => {
-    alert(`Notification sent to ${deptName} Department for low resolving ratio.`);
-  };
-
+  const notifyDepartment = async(deptName)=>{
+    try {
+      const user = await getUserByDepartment(deptName);
+      if (!user) {
+        alert(`No user found for ${deptName} department.`);
+        return;
+      }
+  
+      const notification = {
+        title: "Low Resolving Ratio Alert",
+        message: `Your department (${deptName}) has a low issue resolving ratio. Please take action.`,
+        timestamp:new Date(),
+        department:deptName,
+        isRead: false,
+      };
+  
+      await sendNotificationToUser(user.uid, notification);
+  setSnackbar({open:true,severity:'success',message:`Notification sent successfully to ${deptName} department!`})
+     
+      
+    } catch (error) {
+      console.error("Failed to send notification:", error);
+      alert("Error sending notification. Check console.");
+  setSnackbar({open:true,severity:'error',message:`Error in sending notification`})
+      
+    }
+  }
   return (
     <div className="p-6 bg-gray-50 rounded-lg">
-      {/* Heading */}
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Department-Wise Issue Statistics</h2>
 
-      {/* Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Left: Table */}
@@ -46,34 +82,43 @@ export default function DeptWiseStats() {
                 <th className="border p-3 text-left">Department</th>
                 <th className="border p-3 text-center">Resolved</th>
                 <th className="border p-3 text-center">Pending</th>
+                <th className="border p-3 text-center">Progress</th>
                 <th className="border p-3 text-center">Unresolved</th>
+                <th className="border p-3 text-center">Resolving %</th>
+                <th className="border p-3 text-center">Action</th>
               </tr>
             </thead>
             <tbody>
               {departmentData.map((dept, index) => {
-                const resolvingRatio = getResolvingRatio(dept.resolved, dept.pending, dept.unresolved);
-
+                const resolvingRatio = getResolvingRatio(
+                  dept.resolved,
+                  dept.pending,
+                  dept.unresolved,
+                  dept.progress
+                );
                 return (
-                  <tr 
-                    key={index} 
-                    className="hover:bg-gray-50 relative"
-                    onMouseEnter={() => setHoveredDept(dept.dept)}
+                  <tr
+                    key={index}
+                    className={`${hoveredDept === dept.department ? "bg-gray-200" : ""}`}
+                    onMouseEnter={() => setHoveredDept(dept.department)}
                     onMouseLeave={() => setHoveredDept(null)}
                   >
-                    <td className="border p-3 relative">
-                      {dept.dept}
-                      {resolvingRatio < 50 && hoveredDept === dept.dept && (
-                        <button 
-                          className="absolute left-2/3 top-1/2 transform -translate-y-1/2 bg-red-500 text-white px-3 py-1 rounded-md text-xs hover:bg-red-700 transition"
-                          onClick={() => notifyDepartment(dept.dept)}
+                    <td className="border p-3">{dept.department}</td>
+                    <td className="border p-3 text-center">{dept.resolved}</td>
+                    <td className="border p-3 text-center">{dept.pending}</td>
+                    <td className="border p-3 text-center">{dept.progress}</td>
+                    <td className="border p-3 text-center">{dept.unresolved}</td>
+                    <td className="border p-3 text-center">{resolvingRatio.toFixed(1)}%</td>
+                    <td className="border p-3 text-center">
+                      {resolvingRatio < 50 && (
+                        <button
+                          className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                          onClick={() => notifyDepartment(dept.department)}
                         >
-                          Notify Them
+                          Notify
                         </button>
                       )}
                     </td>
-                    <td className="border p-3 text-center text-green-600 font-medium">{dept.resolved}</td>
-                    <td className="border p-3 text-center text-yellow-500 font-medium">{dept.pending}</td>
-                    <td className="border p-3 text-center text-red-500 font-medium">{dept.unresolved}</td>
                   </tr>
                 );
               })}
@@ -81,21 +126,24 @@ export default function DeptWiseStats() {
           </table>
         </div>
 
-        {/* Right: Bar Chart (Responsive) */}
-        <div className="flex justify-center">
-          <div className="w-full h-64 md:h-96"> {/* Adjust height based on screen size */}
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 20, right: 20, left: -10, bottom: 20 }}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="Resolved" fill="#22c55e" />
-                <Bar dataKey="Pending" fill="#eab308" />
-                <Bar dataKey="Unresolved" fill="#ef4444" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+        {/* Right: Bar Chart with integer Y-axis */}
+        <div className="h-96">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData}>
+              <XAxis dataKey="name" />
+              <YAxis 
+                allowDecimals={false}
+                ticks={generateTicks()}
+                domain={[0, maxValue]}
+              />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="Resolved" fill="#4CAF50" />
+              <Bar dataKey="Pending" fill="#FFC107" />
+              <Bar dataKey="Progress" fill="#03A9F4" />
+              <Bar dataKey="Unresolved" fill="#F44336" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
 
       </div>

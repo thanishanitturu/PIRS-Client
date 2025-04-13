@@ -3,7 +3,6 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword,signOut
 } from "firebase/auth";
-// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, setDoc, getDoc,updateDoc } from "firebase/firestore";
 
 const registerUser = async (name, email, password, role, address, department, phone, photo) => {
@@ -50,7 +49,7 @@ const loginUser = async (email, password, requiredRole = null) => {
     }
 
     const userData = userDoc.data();
-    console.log("User details:", userData);
+    // console.log("User details:", userData);
 
     // Check if user has a role field
     if (!userData.role) {

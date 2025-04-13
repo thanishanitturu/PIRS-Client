@@ -1,6 +1,7 @@
 import { deleteUser,createUserWithEmailAndPassword} from "firebase/auth";
-import { deleteDoc, collection, query, where, getDocs,doc,updateDoc,setDoc,serverTimestamp} from "firebase/firestore";
+import { deleteDoc, collection, query, where, getDocs,doc,updateDoc,setDoc,serverTimestamp,getDoc,arrayUnion} from "firebase/firestore";
 import { auth,db } from "../firebaseConfig";
+import { v4 as uuidv4 } from "uuid"; 
 
 const fetchAllUsers = async () => {
     try {
@@ -19,7 +20,7 @@ const fetchAllUsers = async () => {
         }
       });
   
-      console.log("Fetched users (excluding admins):", users);
+      // console.log("Fetched users (excluding admins):", users);
       return users;
     } catch (error) {
       console.error("Error fetching users:", error.message);
@@ -99,6 +100,7 @@ const addAuthority = async (authorityData) => {
 
       // 3. Create the user document in Firestore
       await setDoc(doc(db, "users", userCredential.user.uid), {
+          uid:userCredential.user.uid,
           name: authorityData.name,
           email: authorityData.email,
           phone: authorityData.phone || "",
@@ -123,4 +125,53 @@ const addAuthority = async (authorityData) => {
       throw error;
   }
 };
-export {fetchAllUsers,deleteUserAccount,editUserDetails,addAuthority}
+
+const getUserByDepartment = async(departmentName)=>{
+  try {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("department", "==", departmentName));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const userDoc = querySnapshot.docs[0]; // Since only one user per department
+      return {
+        uid: userDoc.uid,
+        ...userDoc.data()
+      };
+    } else {
+      console.log("No user found for department:", departmentName);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error getting user by department:", error);
+    return null;
+  }
+}
+
+
+const sendNotificationToUser = async (userId, notification) => {
+  const notificationDocRef = doc(db, "notifications", userId);
+
+  const docSnap = await getDoc(notificationDocRef);
+
+  // Create notification with a generated id
+  const notificationWithId = {
+    ...notification,
+    id: uuidv4() // generate a unique id for this notification
+  };
+
+  if (docSnap.exists()) {
+    // Update notifys array
+    await updateDoc(notificationDocRef, {
+      notifys: arrayUnion(notificationWithId)
+    });
+  } else {
+    // Create new document with userId and notifys array
+    await setDoc(notificationDocRef, {
+      userId: userId,
+      notifys: [notificationWithId]
+    });
+  }
+};
+
+export {fetchAllUsers,deleteUserAccount,editUserDetails,addAuthority,getUserByDepartment,sendNotificationToUser}

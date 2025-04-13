@@ -85,7 +85,9 @@ export default function Notifyall() {
                 </button>
                 <h3 className="text-lg font-semibold text-gray-900 pr-6">{notification.department}</h3>
                 <p className="text-gray-700 mt-2">{notification.message}</p>
-                <p className="text-sm text-gray-500 mt-1">{notification.date} at {notification.time}</p>
+                <div className="text-xs text-gray-500">
+                {new Date(notification.timestamp.toDate()).toLocaleString()}
+                </div>
                 <button
                   onClick={() => markAsRead(notification.id)}
                   className="mt-3 w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 active:scale-95 transition transform duration-150"
@@ -116,7 +118,7 @@ export default function Notifyall() {
                 <h3 className="text-lg font-semibold text-gray-900 pr-6">{notification.department}</h3>
                 <p className="text-gray-700 mt-2">{notification.message}</p>
                 <div className="text-xs text-gray-500">
-                  {notification?.timestamp && new Date(notification.timestamp).toLocaleString()}
+                {new Date(notification.timestamp.toDate()).toLocaleString()}
                 </div>
                 <div className="mt-3 text-center text-green-600 text-sm font-medium">
                   ✓ Read

@@ -1,7 +1,9 @@
-import React, { useState,useContext } from "react";
+import React, { useState,useContext, useEffect } from "react";
 import { FaTrash, FaSearch, FaCheckCircle,FaSpinner} from "react-icons/fa";
 import { Dialog } from "@headlessui/react";
 import { AppContext } from "../../../context/AppContext";
+import { getAllUserReports } from "../../../firebase/citizen/reportFuncs";
+import { deleteReport, verifyAllReports } from "../../../firebase/admin/manageReportFuncs";
 
 const issuesData = [
   { id: 2, title: "Garbage Dump", description: "Trash is piling up in the street", reportedBy: "Alice", department: "Sanitation", status: "In Progress", date: "2025-03-11", isVerifiedByAdmin: true, images: ["https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg","https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg"] },
@@ -9,7 +11,8 @@ const issuesData = [
 ];
 
 export default function AdminIssues() {
-  const [issues, setIssues] = useState(issuesData);
+  const{allReports,setSnackbar,setAllReports} = useContext(AppContext);
+  const [issues, setIssues] = useState(allReports);
   const [selectedTab, setSelectedTab] = useState("new");
   const [searchText, setSearchText] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("");
@@ -19,42 +22,83 @@ export default function AdminIssues() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [issueToDelete, setIssueToDelete] = useState(null);
-  const { setSnackbar,snackbar} = useContext(AppContext);
   const[loading,setLoading] = useState(false);
+  const[circularLoading,setCircularLoading] = useState(false);
 
+  useEffect(() => {
+    const getReportsData = async () => {
+      try {
+        setCircularLoading(true);
+        const res = await getAllUserReports();
+        setAllReports(res || []); // Ensure it's never null
+        setIssues(res || []); // Ensure it's never null
+      } catch (error) {
+        console.error("Error fetching reports:", error);
+        setSnackbar({ message: "Failed to load issues", severity: "error", open: true });
+      } finally {
+        setCircularLoading(false);
+      }
+    };
+    getReportsData();
+  }, []);
   const filteredIssues = issues.filter(issue => {
     const matchesTab = selectedTab === "new" ? !issue.isVerifiedByAdmin : issue.isVerifiedByAdmin;
     const matchesSearch = issue.title.toLowerCase().includes(searchText.toLowerCase()) ||
                           issue.description.toLowerCase().includes(searchText.toLowerCase());
     const matchesDepartment = departmentFilter ? issue.department === departmentFilter : true;
     const matchesStatus = statusFilter ? issue.status === statusFilter : true;
-    const matchesDate = (!dateFilter.start || new Date(issue.date) >= new Date(dateFilter.start)) &&
-                        (!dateFilter.end || new Date(issue.date) <= new Date(dateFilter.end));
+    const matchesDate = (!dateFilter.start || new Date(issue.reportedDate) >= new Date(dateFilter.start)) &&
+                        (!dateFilter.end || new Date(issue.reportedDate) <= new Date(dateFilter.end));
 
     return matchesTab && matchesSearch && matchesDepartment && matchesStatus && matchesDate;
   });
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setLoading(true);
-    setTimeout(() => {  
+    
+    try {
+      if (!selectedIssue?.id) {
+        throw new Error("No issue selected for deletion");
+      }
+  
+      console.log("Deleting issue:", selectedIssue);
+      const res = await deleteReport(selectedIssue.id);
+      console.log("Delete result:", res);
+  
+      // Update local state
+      setIssues(prevIssues => prevIssues.filter(issue => issue.id !== selectedIssue.id));
       
-    setIssues(issues.filter(issue => issue.id !== issueToDelete));
-    setSnackbar({ message: "Issue Deleted successfully", severity: "success",open:true });
-    setIsConfirmOpen(false);
-    setLoading(false);
+      // Show success message
+      setSnackbar({ 
+        message: "Issue deleted successfully", 
+        severity: "success",
+        open: true 
+      });
+    } catch (error) {
+      console.error("Delete failed:", error);
+      setSnackbar({
+        message: error.message || "Failed to delete issue",
+        severity: "error",
+        open: true
+      });
+    } finally {
+      setIsConfirmOpen(false);
+      setLoading(false);
     }
-, 1000);
   };
 
   const handleVerifyAll = () => {
     setLoading(true);
-    setTimeout(() => {  
+    setTimeout(async() => {  
         const updatedIssues = issues.map(issue => {
             if (!issue.isVerifiedByAdmin) {
               return { ...issue, isVerifiedByAdmin: true };
             }
             return issue;
           });
+        
+          const res = await verifyAllReports();
+          console.log(res);
           setSnackbar({ message: "All issues verified successfully", severity: "success",open:true });
           setIssues(updatedIssues);
             setLoading(false);
@@ -69,6 +113,14 @@ export default function AdminIssues() {
 
   // Check if there are no newly reported issues
   const noNewIssues = selectedTab === "new" && filteredIssues.length === 0;
+
+  if (circularLoading) {
+    return (
+      <div className="p-6 bg-gray-50 min-h-screen flex items-center justify-center">
+        <FaSpinner className="animate-spin text-4xl text-blue-500" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -123,9 +175,12 @@ export default function AdminIssues() {
               className="w-full p-2 border rounded"
             >
               <option value="">Filter by Department</option>
-              <option value="Municipal">Municipal</option>
-              <option value="Sanitation">Sanitation</option>
-              <option value="Traffic">Traffic</option>
+              <option value="water_supply_department">Water Supply Department</option>
+        <option value="electricity_board">Electricity Board</option>
+        <option value="municipal_department">Municipal Department/Corporation</option>
+        <option value="public_works_department">Public Works Department</option>
+        <option value="traffic_control_department">Traffic Control Department</option>
+        <option value="parks_department">Parks and Recreation Department</option>
             </select>
             <select
               value={statusFilter}
@@ -133,9 +188,9 @@ export default function AdminIssues() {
               className="w-full p-2 border rounded"
             >
               <option value="">Filter by Status</option>
-              <option value="Pending">Pending</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Resolved">Resolved</option>
+              <option value="pending">Pending</option>
+              <option value="progress">In Progress</option>
+              <option value="resolved">Resolved</option>
             </select>
             <div className="flex gap-2">
               <input
@@ -171,10 +226,10 @@ export default function AdminIssues() {
                 <tr key={issue.id} className="border-b hover:bg-gray-100 cursor-pointer" onClick={() => { setSelectedIssue(issue); setIsModalOpen(true); }}>
                   <td className="p-2 text-center">{issue.title}</td>
                   <td className="p-2 text-center">{issue.description}</td>
-                  <td className="p-2 text-center">{issue.reportedBy}</td>
+                  <td className="p-2 text-center">{issue.reportedBy.name}</td>
                   <td className="p-2 text-center">{issue.department}</td>
                   <td className="p-2 text-center">{issue.status}</td>
-                  <td className="p-2 text-center">{formatDate(issue.date)}</td>
+                  <td className="p-2 text-center">{formatDate(issue.reportedDate)}</td>
                   <td className="p-2 text-center">
                     <FaTrash className="text-red-500 cursor-pointer" onClick={(e) => { e.stopPropagation(); setIssueToDelete(issue.id); setIsConfirmOpen(true); }} />
                   </td>
@@ -192,12 +247,12 @@ export default function AdminIssues() {
             <h2 className="text-xl font-bold mb-4">{selectedIssue.title}</h2>
             <div className="space-y-2">
               <p><strong>Description:</strong> {selectedIssue.description}</p>
-              <p><strong>Reported By:</strong> {selectedIssue.reportedBy}</p>
+              <p><strong>Reported By:</strong> {selectedIssue.reportedBy.name}</p>
               <p><strong>Department:</strong> {selectedIssue.department}</p>
               <p><strong>Status:</strong> {selectedIssue.status}</p>
-              <p><strong>Date:</strong> {formatDate(selectedIssue.date)}</p>
+              <p><strong>Date:</strong> {formatDate(selectedIssue.reportedDate)}</p>
               <div className="flex gap-2 mt-4">
-                {selectedIssue.images.map((img, index) => (
+                {selectedIssue.photoUrls.map((img, index) => (
                   <img key={index} src={img} alt="Issue" className="w-24 h-24 rounded-lg border" />
                 ))}
               </div>

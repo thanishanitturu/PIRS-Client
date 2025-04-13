@@ -29,6 +29,7 @@ const LoginPage = () => {
       try {
         console.log("Login attempt with:", { email, password, currRole });
         
+        console.log(currRole);
         const response = await loginUser(email, password, currRole);
         console.log("Login successful:", response);
         

@@ -5,7 +5,7 @@ import { editCitizen, deleteCitizen} from "./Citizenfunc";
 import {  deleteAuthority, editAuthority } from "./Authorityfunc";
 import { AppContext } from "../../../context/AppContext";
 import { addAuthority, fetchAllUsers } from "../../../firebase/admin/manageUserFuncs";
-import { Loader } from "lucide-react";
+import { EarOffIcon, Loader } from "lucide-react";
 import emailjs from 'emailjs-com';
 import { generateDepartmentEmail } from "../../../utilities/utilities";
 emailjs.init('cAV_xtJvINO-NznWk');
@@ -77,8 +77,8 @@ const AdminUsers = () => {
     if (selectedRole === "citizen") {
       deleteCitizen(deletingItem.id, setUsers, setLoading, closeDeleteModal, setSnackbar);
     } else {
-      console.log(deletingItem);
-      console.log(deletingItem.id);
+      // console.log(deletingItem);
+      // console.log(deletingItem.id);
       deleteAuthority(deletingItem.id, setAuthorities, setLoading, closeDeleteModal, setSnackbar);
     }
   };
@@ -95,14 +95,15 @@ const AdminUsers = () => {
     try {
       // 1. Generate credentials
       const generatedEmail = generateDepartmentEmail(newAuthority.department);
-      const tempPassword = generateTempPassword();
+      // const tempPassword = generateTempPassword();
   
       // 2. Add to Firestore
       const authorityDataForFirestore = {
         ...newAuthority,
         email: generatedEmail,
-        password: tempPassword
+        password:newAuthority.password
       };
+      console.log(authorityDataForFirestore);
   
       const res = await addAuthority(authorityDataForFirestore);
   
@@ -111,7 +112,7 @@ const AdminUsers = () => {
         name: newAuthority.name,
         department: newAuthority.department,
         officialEmail: generatedEmail,
-        password: tempPassword,
+        password:newAuthority.password,
         loginUrl: "https://pirs-system.gov/login"
       });
   
@@ -130,6 +131,7 @@ const AdminUsers = () => {
       
       closeAddModal();
     } catch (error) {
+      console.log(error)
       setSnackbar({
         message: `Failed to add authority: ${error.message}`,
         type: "error",
@@ -283,7 +285,7 @@ const AdminUsers = () => {
             <FaTimes />
           </button>
           <h3 className="text-xl font-semibold mb-4">Add Authority</h3>
-          {["name", "email", "phone", "department"].map((field) => (
+          {["name", "email", "phone", "department","password"].map((field) => (
   <div key={field} className="mb-3">
     <label className="block text-gray-700 font-medium capitalize">{field.replace("_", " ")}</label>
 

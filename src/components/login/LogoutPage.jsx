@@ -26,9 +26,10 @@ const LogoutPage = () => {
       localStorage.removeItem("role");
       setToken(null);
       setRole("empty");
-      setSnackbar({open:true,severity:"success",message:'Logout succesfull...'});
+      
       setTimeout(() => {
         navigate('/login', { replace: true });
+        setSnackbar({open:true,severity:"success",message:'Logout succesfull...'});
       }, 1000);
     } catch (err) {
       console.error('Logout error:', err);

@@ -30,8 +30,8 @@ const navigation2 = [
 ];
 
 const departmentAdminNavigation = [
-  { name: "Issues", href: "department/issues", current: false },
-  { name: "Statistics", href: "department/dashboard", current: false },
+  { name: "Issues", href: "/department/issues", current: true },
+  { name: "Statistics", href: "/department/dashboard", current: false },
 ];
 
 
@@ -45,7 +45,7 @@ export default function Navbar({token}) {
 
   const location = useLocation();
 
- 
+ console.log(notifications);
 
   const handleViewAll = () => {
     navigate("/notifications");
@@ -177,7 +177,10 @@ export default function Navbar({token}) {
                                   <div key={index} className="p-2 border-b text-gray-700">
                                     <strong className="text-blue-600">{notification.department}</strong>: {notification.message}
                                     <div className="text-xs text-gray-500">
-  {notification?.timestamp && new Date(notification.timestamp).toLocaleString()}
+                                    {/* {notification?.timestamp && new Date(notification.timestamp).toLocaleString()} */}
+                                    {new Date(notification.timestamp.toDate()).toLocaleString()}
+                                   
+
 </div>
 
                                   </div>

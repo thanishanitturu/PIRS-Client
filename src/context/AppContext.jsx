@@ -17,11 +17,12 @@ export const AppProvider = ({ children }) => {
     const getNofications = async()=>{
         const res  = await getUserNotifications(localStorage.getItem("uid"));
         console.log(res);
+        console.log("hello world")
         setNotifications(res);
     }
 
     getNofications();
-  },[]);
+  },[role]);
 
   
 
