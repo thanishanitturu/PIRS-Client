@@ -14,7 +14,7 @@ const getUserNotifications = async (userId) => {
       const notificationsDocSnap = await getDoc(notificationsDocRef);
   
       if (!notificationsDocSnap.exists()) {
-        console.log("No notifications found for this user.");
+        // console.log("No notifications found for this user.");
         return []; 
       }
   
@@ -24,7 +24,7 @@ const getUserNotifications = async (userId) => {
   
       // Optionally sort by timestamp (newest first)
       notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      console.log(notifications)
+      // console.log(notifications)
       console.log("✅ Notifications fetched successfully");
       return notifications;
   

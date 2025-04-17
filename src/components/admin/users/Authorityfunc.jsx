@@ -2,11 +2,11 @@ import { deleteUserAccount } from "../../../firebase/admin/manageUserFuncs";
 
   export const deleteAuthority = (id, setAuthorities, setDelAuthLoading, closeDeleteModal, setSnackbar) => {
     setDelAuthLoading(true);
-    console.log(id)
+    // console.log(id)
     setTimeout(async() => {
       setAuthorities((prevAuthorities) => prevAuthorities.filter(authority => authority.id !== id));
       const res = await deleteUserAccount(id);
-      console.log(res);
+      // console.log(res);
       setDelAuthLoading(false);
       closeDeleteModal(); 
   

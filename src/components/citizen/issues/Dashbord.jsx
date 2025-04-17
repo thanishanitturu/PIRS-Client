@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { LocationOn, AccessTime, CheckCircle, Pending,ThumbUp,Comment} from "@mui/icons-material";
+import { LocationOn, AccessTime, CheckCircle, Pending,ThumbUp,Comment,HourglassEmpty,Error} from "@mui/icons-material";
 import SearchIssue from "./SearchIssue";
 import { Loader } from "lucide-react";
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
@@ -124,8 +124,11 @@ const Dashboard = () => {
                   : "text-red-600"
               }`}
             >
-              {issue.status === "Resolved" && <CheckCircle className="inline-block mr-2" />}
-              {issue.status === "In Progress" && <Pending className="inline-block mr-2" />}
+             {issue.status === "resolved" && <CheckCircle className="inline-block text-green-600 mr-2" />}
+{issue.status === "progress" && <Pending className="inline-block text-yellow-600 mr-2" />}
+{issue.status === "unresolved" && <Error className="inline-block text-red-600 mr-2" />}
+{issue.status === "pending" && <HourglassEmpty className="inline-block text-blue-600 mr-2" />}
+
               {issue.status}
             </p>
             
@@ -164,12 +167,12 @@ const Dashboard = () => {
       <div className="flex items-center">
         <AccessTime className="text-gray-400 mr-2" />
         <p className="text-gray-600">
-          Reported on: {new Date(selectedIssue?.date).toLocaleDateString()}
+          Reported on: {new Date(selectedIssue?.reportedDate).toLocaleDateString()}
         </p>
       </div>
       <div className="flex items-center">
         <LocationOn className="text-gray-400 mr-2" />
-        <p className="text-gray-600">{selectedIssue?.location}</p>
+        <p className="text-gray-600">{selectedIssue?.address}</p>
       </div>
     </div>
 
@@ -187,12 +190,18 @@ const Dashboard = () => {
             : "text-red-600"
         }`}
       >
-        {selectedIssue?.status === "Resolved" && (
+        {selectedIssue?.status === "resolved" && (
           <CheckCircle className="inline-block mr-2" />
         )}
-        {selectedIssue?.status === "In Progress" && (
+        {selectedIssue?.status === "progress" && (
           <Pending className="inline-block mr-2" />
         )}
+        {
+          selectedIssue?.status ==="pending" && (<HourglassEmpty className="inline-block mr-2"  />)
+        }
+        {
+          selectedIssue?.status==="unresolved" && (<Error className="inline-block mr-2"  />)
+        }
         {selectedIssue?.status}
       </div>
     </div>

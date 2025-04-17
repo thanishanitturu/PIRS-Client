@@ -32,7 +32,7 @@ function DashbordMainLayout() {
         if (report.status === 'pending') newCounts.pending++;
         else if (report.status === 'unresolved') newCounts.unresolved++;
         else if (report.status === 'resolved') newCounts.resolved++;
-        else if (report.status === 'in progress') newCounts.progress++;
+        else if (report.status === 'progress') newCounts.progress++;
       });
 
       setCounts(newCounts);

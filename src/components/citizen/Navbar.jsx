@@ -45,7 +45,7 @@ export default function Navbar({token}) {
 
   const location = useLocation();
 
- console.log(notifications);
+//  console.log(notifications);
 
   const handleViewAll = () => {
     navigate("/notifications");

@@ -4,12 +4,12 @@ import {FaSpinner} from "react-icons/fa";
 
 import { loginUser } from '../../firebase/citizen/authFuncs';
 import { AppContext } from '../../context/AppContext';
-import { NavigationOff } from 'lucide-react';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [currRole, setCurrRole] = useState("citizen"); 
+  const[deptName,setDeptName] = useState("deptname");
   const navigate = useNavigate();
   const[loading,setLoading] = useState(false);
   const{setSnackbar,token,setToken,setRole} = useContext(AppContext);
@@ -36,6 +36,7 @@ const LoginPage = () => {
         // Store user data in localStorage
         localStorage.setItem("role", response.role); // Note: response.data doesn't exist in our loginUser function
         localStorage.setItem("uid", response.uid); // Store user ID as well
+        localStorage.setItem("deptname",response.department);
         setRole(response.role);
         setToken(response.uid);
         
