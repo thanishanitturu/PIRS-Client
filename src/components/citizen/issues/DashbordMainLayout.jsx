@@ -46,7 +46,7 @@ function DashbordMainLayout() {
  
   return (
         <>
-            <StatisticDisplay  stats={counts} />
+            <StatisticDinpsplay  stats={counts} />
             <Dashboard />
         </>
 )
