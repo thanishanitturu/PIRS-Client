@@ -95,7 +95,6 @@ const AdminUsers = () => {
     try {
       // 1. Generate credentials
       const generatedEmail = generateDepartmentEmail(newAuthority.department);
-      // const tempPassword = generateTempPassword();
   
       // 2. Add to Firestore
       const authorityDataForFirestore = {
@@ -104,6 +103,7 @@ const AdminUsers = () => {
         password:newAuthority.password
       };
       console.log(authorityDataForFirestore);
+      console.log(newAuthority);
   
       const res = await addAuthority(authorityDataForFirestore);
       console.log(newAuthority);
@@ -144,21 +144,23 @@ const AdminUsers = () => {
   
   // Updated email sending function
   const sendWelcomeEmail = async (authorityData) => {
-    console.log(authorityData)
     const templateParams = {
       name: authorityData.name,
       department: authorityData.department,
       official_email: authorityData.officialEmail,
-      password:authorityData.password,
-      login_url:authorityData.loginUrl,
-      to_email:authorityData.officialEmail
+      password: authorityData.password,
+      login_url: authorityData.loginUrl,
+      to_email: authorityData.officialEmail, // This should match {{to_email}} in your template
     };
+  
+    console.log("Sending email to:", templateParams.to_email);
   
     try {
       await emailjs.send(
-        'service_2igm3qd',
-        'template_5m2h1hq',
-        templateParams
+        'service_2igm3qd',       // Replace with your actual service ID
+        'template_5m2h1hq',      // Replace with your actual template ID
+        templateParams,
+        'f2aUITqQLMWTLNT75'        // Optional: Only if required by your EmailJS config
       );
       return true;
     } catch (error) {
