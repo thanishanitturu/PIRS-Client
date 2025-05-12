@@ -1,6 +1,6 @@
 import { useState, Fragment, useContext, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { Loader } from "lucide-react";
+import { Loader, Edit, User, Mail, Phone, MapPin } from "lucide-react";
 import { AppContext } from "../../context/AppContext";
 import { getUserData, updateUserProfile } from "../../firebase/citizen/authFuncs";
 import axios from "axios";
@@ -12,6 +12,7 @@ export default function AdminProfile() {
   const [updatedUserData, setUpdatedUserData] = useState({});
   const [previewImage, setPreviewImage] = useState("");
   const { setSnackbar } = useContext(AppContext);
+  const [activeTab, setActiveTab] = useState("profile");
 
   useEffect(() => {
     const getUserDataFunc = async () => {
@@ -98,206 +99,194 @@ export default function AdminProfile() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-white">
-      {/* Mobile View - Only Profile Details */}
-      <div className="lg:hidden p-6 flex flex-col items-center">
-        <img 
-          src={userData?.photoURL} 
-          alt="Admin" 
-          className="w-32 h-32 rounded-full object-cover border-4 border-gray-300 mb-4" 
-        />
-        <h2 className="text-2xl font-bold text-gray-800 text-center">{userData?.name}</h2>
-
-        <div className="w-full mt-6 space-y-4">
-          <div className="flex justify-between border-b pb-2">
-            <span className="font-semibold text-gray-700">Email:</span>
-            <span className="text-gray-600">{userData?.email}</span>
-          </div>
-          <div className="flex justify-between border-b pb-2">
-            <span className="font-semibold text-gray-700">Role:</span>
-            <span className="text-gray-600">{userData?.role}</span>
-          </div>
-          <div className="flex justify-between border-b pb-2">
-            <span className="font-semibold text-gray-700">Contact:</span>
-            <span className="text-gray-600">{userData?.phone}</span>
-          </div>
-          <div className="flex justify-between border-b pb-2">
-            <span className="font-semibold text-gray-700">Address:</span>
-            <span className="text-gray-600">{userData?.address || "NA"}</span>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+          <div className="flex items-center space-x-4">
+            <img 
+              src={userData?.photoURL} 
+              alt="Profile" 
+              className="h-10 w-10 rounded-full object-cover"
+            />
+            <span className="font-medium">{userData?.name}</span>
           </div>
         </div>
-
-        <button 
-          className="mt-8 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition w-full max-w-xs" 
-          onClick={() => setIsEditing(true)}
-        >
-          Edit Profile
-        </button>
       </div>
 
-      {/* Desktop View - Optimized Vertical Layout */}
-      <div className="hidden lg:flex h-screen w-full">
-        {/* Left Section */}
-        <div className="w-1/3 h-full bg-gray-100 flex flex-col p-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-8">Public Issue Reporting System</h1>
-          <img 
-            src="https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg" 
-            alt="PIRS" 
-            className="w-full h-auto object-cover mt-8 rounded-lg" 
-          />
-        </div>
-
-        {/* Right Section - Vertical Flow */}
-        <div className="w-2/3 h-full p-8 overflow-y-auto">
-          <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8">
-            <div className="flex flex-col items-center space-y-1">
-              {/* Profile Image */}
-              <img 
-                src={userData?.photoURL} 
-                alt="Admin" 
-                className="w-48 h-48 rounded-full object-cover border-4 border-gray-300 shadow-md" 
-              />
-              
-              {/* Profile Name */}
-              <h2 className="text-4xl font-bold text-gray-800 text-center">{userData?.name}</h2>
-              
-              {/* Profile Details */}
-              <div className="w-full space-y-6 text-lg">
-                <div className="flex flex-col space-y-1">
-                  <span className="font-semibold text-gray-700">Email</span>
-                  <span className="text-gray-600 p-3 bg-gray-50 rounded-lg">{userData?.email}</span>
-                </div>
-                
-                <div className="flex flex-col space-y-1">
-                  <span className="font-semibold text-gray-700">Role</span>
-                  <span className="text-gray-600 p-3 bg-gray-50 rounded-lg">{userData?.role}</span>
-                </div>
-                
-                <div className="flex flex-col space-y-1">
-                  <span className="font-semibold text-gray-700">Contact</span>
-                  <span className="text-gray-600 p-3 bg-gray-50 rounded-lg">{userData?.phone}</span>
-                </div>
-                
-                <div className="flex flex-col space-y-1">
-                  <span className="font-semibold text-gray-700">Address</span>
-                  <span className="text-gray-600 p-3 bg-gray-50 rounded-lg">{userData?.address || "Not specified"}</span>
-                </div>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Sidebar */}
+          <div className="w-full md:w-64 flex-shrink-0">
+            <div className="bg-white rounded-lg shadow p-4">
+              <div className="flex flex-col items-center py-4">
+                <img 
+                  src={userData?.photoURL} 
+                  alt="Profile" 
+                  className="h-24 w-24 rounded-full object-cover border-4 border-blue-100 mb-3"
+                />
+                <h2 className="text-xl font-bold text-center">{userData?.name}</h2>
+                <p className="text-sm text-gray-500">{userData?.role}</p>
               </div>
 
-              {/* Edit Button */}
-              <button 
-                className="mt-6 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-lg font-medium w-full max-w-xs" 
-                onClick={() => setIsEditing(true)}
-              >
-                Edit Profile
-              </button>
+              <nav className="mt-6 space-y-1">
+                <button
+                  onClick={() => setActiveTab("profile")}
+                  className={`w-full flex items-center px-4 py-2 text-sm font-medium rounded-md ${activeTab === "profile" ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'}`}
+                >
+                  <User className="mr-3 h-5 w-5" />
+                  Profile
+                </button>
+                <button
+                  onClick={() => setActiveTab("settings")}
+                  className={`w-full flex items-center px-4 py-2 text-sm font-medium rounded-md ${activeTab === "settings" ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'}`}
+                >
+                  <Edit className="mr-3 h-5 w-5" />
+                  Edit Profile
+                </button>
+              </nav>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Edit Modal */}
-      <Transition show={isEditing} as={Fragment}>
-        <Dialog as="div" className="relative z-50" onClose={() => setIsEditing(false)}>
-          <Transition.Child as={Fragment} enter="transition-opacity duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="transition-opacity duration-300" leaveFrom="opacity-100" leaveTo="opacity-0">
-            <div className="fixed inset-0 bg-black bg-opacity-50" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 flex items-center justify-center p-4">
-            <Transition.Child as={Fragment} enter="transition-transform duration-300 ease-out" enterFrom="translate-y-full" enterTo="translate-y-0" leave="transition-transform duration-300 ease-in" leaveFrom="translate-y-0" leaveTo="translate-y-full">
-              <Dialog.Panel className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
-                <Dialog.Title className="text-xl font-bold mb-4">Edit Profile</Dialog.Title>
-                <div className="space-y-4">
-                  <div className="flex flex-col items-center">
-                    <img 
-                      src={previewImage} 
-                      alt="Preview" 
-                      className="w-20 h-20 rounded-full object-cover border mb-2" 
-                    />
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Profile Photo
-                    </label>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      onChange={handleImageChange} 
-                      className="w-full text-sm"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Name
-                    </label>
-                    <input 
-                      type="text" 
-                      name="name" 
-                      value={updatedUserData.name || ""} 
-                      onChange={handleChange} 
-                      className="w-full p-2 border rounded-md" 
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email
-                    </label>
-                    <input 
-                      type="email" 
-                      name="email" 
-                      value={updatedUserData.email || ""} 
-                      onChange={handleChange} 
-                      className="w-full p-2 border rounded-md" 
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Contact
-                    </label>
-                    <input 
-                      type="text" 
-                      name="phone" 
-                      value={updatedUserData.phone || ""} 
-                      onChange={handleChange} 
-                      className="w-full p-2 border rounded-md" 
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Address
-                    </label>
-                    <input 
-                      type="text" 
-                      name="address" 
-                      value={updatedUserData.address || ""} 
-                      onChange={handleChange} 
-                      className="w-full p-2 border rounded-md" 
-                    />
+          {/* Main Panel */}
+          <div className="flex-1">
+            {activeTab === "profile" ? (
+              <div className="bg-white rounded-lg shadow overflow-hidden">
+                <div className="px-6 py-5 border-b border-gray-200">
+                  <h3 className="text-lg font-medium leading-6 text-gray-900">Profile Information</h3>
+                </div>
+                <div className="px-6 py-4">
+                  <div className="space-y-6">
+                    <div className="flex items-start">
+                      <Mail className="h-5 w-5 text-gray-400 mt-1 mr-4" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Email</p>
+                        <p className="mt-1 text-sm text-gray-900">{userData?.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <Phone className="h-5 w-5 text-gray-400 mt-1 mr-4" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Contact</p>
+                        <p className="mt-1 text-sm text-gray-900">{userData?.phone}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <MapPin className="h-5 w-5 text-gray-400 mt-1 mr-4" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Address</p>
+                        <p className="mt-1 text-sm text-gray-900">{userData?.address || "Not specified"}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                <div className="px-6 py-4 bg-gray-50 text-right">
+                  <button
+                    onClick={() => setActiveTab("settings")}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
+                  >
+                    Edit Profile
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow overflow-hidden">
+                <div className="px-6 py-5 border-b border-gray-200">
+                  <h3 className="text-lg font-medium leading-6 text-gray-900">Edit Profile</h3>
+                </div>
+                <div className="px-6 py-4">
+                  <div className="space-y-6">
+                    <div className="flex flex-col items-center">
+                      <img 
+                        src={previewImage} 
+                        alt="Preview" 
+                        className="h-24 w-24 rounded-full object-cover border mb-3"
+                      />
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Change Profile Photo
+                      </label>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleImageChange} 
+                        className="w-full text-sm"
+                      />
+                    </div>
 
-                <div className="mt-6 flex justify-end space-x-3">
-                  <button 
-                    className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400 transition"
-                    onClick={() => setIsEditing(false)}
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Name</label>
+                        <input
+                          type="text"
+                          name="name"
+                          value={updatedUserData.name || ""}
+                          onChange={handleChange}
+                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Email</label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={updatedUserData.email || ""}
+                          onChange={handleChange}
+                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Phone</label>
+                        <input
+                          type="text"
+                          name="phone"
+                          value={updatedUserData.phone || ""}
+                          onChange={handleChange}
+                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Address</label>
+                        <input
+                          type="text"
+                          name="address"
+                          value={updatedUserData.address || ""}
+                          onChange={handleChange}
+                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="px-6 py-4 bg-gray-50 text-right space-x-3">
+                  <button
+                    onClick={() => setActiveTab("profile")}
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
                   >
                     Cancel
                   </button>
-                  <button 
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition flex items-center" 
-                    onClick={handleUpdate} 
+                  <button
+                    onClick={handleUpdate}
                     disabled={loading}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
                   >
-                    {loading ? <Loader className="animate-spin h-5 w-5 mr-2" /> : "Update"}
+                    {loading ? (
+                      <>
+                        <Loader className="animate-spin -ml-1 mr-2 h-4 w-4" />
+                        Updating...
+                      </>
+                    ) : "Update Profile"}
                   </button>
                 </div>
-              </Dialog.Panel>
-            </Transition.Child>
+              </div>
+            )}
           </div>
-        </Dialog>
-      </Transition>
+        </div>
+      </div>
     </div>
   );
 }

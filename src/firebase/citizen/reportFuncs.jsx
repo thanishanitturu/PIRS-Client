@@ -1,5 +1,5 @@
 import { auth, db } from "../firebaseConfig";
-import { doc, setDoc, updateDoc, arrayUnion, getDoc,collection,getDocs,runTransaction } from "firebase/firestore";
+import { doc, setDoc, updateDoc, arrayUnion, getDoc,collection,getDocs,runTransaction, query, where} from "firebase/firestore";
 
 const createReport = async (
   title,
@@ -290,4 +290,25 @@ const fetchUserReportsStatistics = async () => {
 };
 
 
-export { createReport,getUserReports,getAllUserReports,addCommentToReport,updateLikeStatus,fetchUserReportsStatistics};
+async function getUserIdByEmail(email) {
+  const usersRef = collection(db, "users");
+  const q = query(usersRef, where("email", "==", email));
+
+  try {
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      const userDoc = querySnapshot.docs[0]; // assuming emails are unique
+      const userId = userDoc.id; // Firestore document ID as userId
+      console.log("User ID:", userId);
+      return userId;
+    } else {
+      console.log("No user found with that email.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
+}
+
+export { createReport,getUserReports,getAllUserReports,addCommentToReport,updateLikeStatus,fetchUserReportsStatistics,getUserIdByEmail};

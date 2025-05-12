@@ -68,18 +68,18 @@ export default function Navbar({token}) {
   const unreadNotifications = notifications.filter((notif) => !notif.isRead);
 
   return (
-    <Disclosure as="nav" className="bg-gray-800">
+    <Disclosure as="nav" className="bg-gray-800 sticky top-0 z-5000">
       {({ open }) => (
         <>
-          <div className="mx-auto px-2 sm:px-6 lg:px-8">
+          <div className="mx-auto px-2 sm:px-6 lg:px-8 border-b border-white-200">
             <div className="relative flex h-16 items-center justify-between">
               {/* Mobile Menu Button */}
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                 <DisclosureButton className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white">
                   {open ? (
-                    <XMarkIcon className="block size-6" />
+                    <XMarkIcon className="block size-6 bg-white text-blue" />
                   ) : (
-                    <Bars3Icon className="block size-6" />
+                    <Bars3Icon className="block size-6 bg-white text-blue" />
                   )}
                 </DisclosureButton>
               </div>
@@ -87,11 +87,11 @@ export default function Navbar({token}) {
               {/* Logo and Navigation Links */}
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-between">
                 <div className="flex shrink-0 items-center">
-                  <img
-                    alt="Your Company"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  {/* <img
+                    alt="PIRS"
+                    src="https://res.cloudinary.com/dgye02qt9/image/upload/v1737871824/publicissue_oiljot.jpg"
                     className="h-8 w-auto rounded-full"
-                  />
+                  /> */}
                   <span className="ml-6 text-white text-xl font-semibold">PIRS</span>
                 </div>
                 <div className="hidden sm:flex justify-center space-x-4">
@@ -153,11 +153,11 @@ export default function Navbar({token}) {
               ) : (
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                   {/* Notifications */}
-                  <Popover className="relative">
+                  <Popover className="relative z-60">
                     {({ close }) => (
                       <>
                         <PopoverButton className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
-                          <BellIcon className="size-6" />
+                          <BellIcon className="size-6 bg-white" />
                           {unreadNotifications.length > 0 && (
                             <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
                               {unreadNotifications.length}
@@ -165,7 +165,7 @@ export default function Navbar({token}) {
                           )}
                         </PopoverButton>
 
-                        <PopoverPanel className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 z-50 w-64 sm:w-80 bg-white shadow-lg rounded-lg p-4">
+                        <PopoverPanel className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 z-50 w-64 sm:w-80 bg-white shadow-lg rounded-lg p-4 z-60">
                           <div className="relative bg-white p-4 rounded-lg shadow">
                             {/* Small arrow indicator */}
                             <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 sm:left-auto sm:right-6 w-4 h-4 rotate-45 bg-white"></div>
@@ -175,12 +175,11 @@ export default function Navbar({token}) {
                               {unreadNotifications.length > 0 ? (
                                 unreadNotifications.map((notification, index) => (
                                   <div key={index} className="p-2 border-b text-gray-700">
-                                    <strong className="text-blue-600">{notification.department}</strong>: {notification.message}
+                                    <strong className="text-blue-600">{notification?.department}</strong>: {notification?.message}
                                     <div className="text-xs text-gray-500">
                                     {/* {notification?.timestamp && new Date(notification.timestamp).toLocaleString()} */}
-                                    {new Date(notification.timestamp.toDate()).toLocaleString()}
-                                   
-
+                                    {new Date(notification?.timestamp?.toDate()).toLocaleString()}
+                          
 </div>
 
                                   </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Dashboard from './Dashbord'
-import StatisticDisplay from './StatisticDisplay'
+import StatisticDisplay from './StatisticDisplay';
 import { getUserReports } from '../../../firebase/citizen/reportFuncs';
 function DashbordMainLayout() {
 

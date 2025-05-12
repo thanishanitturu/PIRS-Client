@@ -6,7 +6,9 @@ import { doc, setDoc, updateDoc, arrayUnion, getDoc,collection,getDocs,runTransa
 const getUserNotifications = async (userId) => {
     try {
       if (!userId) {
-        throw new Error("User ID is required to fetch notifications.");
+        // throw new Error("User ID is required to fetch notifications.");
+        console.log("User Id is requried to fetch Notificaitons..");
+        return [];
       }
   
       // Reference to the user's notifications document
@@ -75,8 +77,9 @@ const markNotifyAsRead = async (userId, notificationId) => {
 
 const delNotification = async (userId, notificationId) => {
   try {
-    if (!userId || !notificationId) {
-      throw new Error("User ID and Notification ID are required.");
+    if(!userId || !notificationId) {
+      // throw new Error("User ID and Notification ID are required.");
+      return "User Id and Notification Id are required.";
     }
 
     const notificationsDocRef = doc(db, "notifications", userId);
@@ -85,7 +88,8 @@ const delNotification = async (userId, notificationId) => {
     const notificationsDocSnap = await getDoc(notificationsDocRef);
 
     if (!notificationsDocSnap.exists()) {
-      throw new Error("No notifications found for this user.");
+      // throw new Error("No notifications found for this user.");
+      return "No Notifcations found for this user..";
     }
 
     const notificationsData = notificationsDocSnap.data();
