@@ -9,7 +9,7 @@ const LogoutPage = () => {
   const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
   const [error, setError] = React.useState(null);
-  const{setToken,setRole,setSnackbar} = useContext(AppContext);
+  const{setToken,setRole,setSnackbar,setUseremail,setUsername} = useContext(AppContext);
 
   // Automatic logout on component mount
   useEffect(() => {
@@ -24,8 +24,13 @@ const LogoutPage = () => {
       await signOut(auth);
       localStorage.removeItem("uid");
       localStorage.removeItem("role");
+      localStorage.removeItem("username");
+      localStorage.removeItem("useremail");
+
       setToken(null);
       setRole("empty");
+      setUseremail(null);
+      setUsername(null);
       
       setTimeout(() => {
         navigate('/login', { replace: true });

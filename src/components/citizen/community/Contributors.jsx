@@ -6,6 +6,9 @@ import { Loader } from "lucide-react";
 const Contributors = () => {
   const [contributors, setContributors] = useState(null);
   const [loading, setLoading] = useState(true);
+  const[topThree,setTopThree] = useState([]);
+  console.log(contributors);
+  console.log(topThree);
 
   useEffect(() => {
     const fetchContributors = async () => {
@@ -36,6 +39,18 @@ const Contributors = () => {
     fetchContributors();
   }, []);
 
+
+  useEffect(() => {
+    if (contributors && contributors.length > 0) {
+      const sorted = [...contributors]
+        .filter(c => c.totalIssues > 0) // avoid divide by 0
+        .sort((a, b) => (b.resolvedIssues / b.totalIssues) - (a.resolvedIssues / a.totalIssues));
+  
+      setTopThree(sorted.slice(0, 3));
+    }
+  }, [contributors]);
+  
+
   const getMedalIcon = (index) => {
     if (index === 0) return "🥇";
     if (index === 1) return "🥈";
@@ -59,11 +74,11 @@ const Contributors = () => {
       <h2 className="text-xl font-bold text-blue-600 mb-6 text-center">
         Top Contributors
       </h2>
-      {contributors.length === 0 ? (
+      {topThree.length === 0 ? (
         <p className="text-center text-gray-500">No contributors found</p>
       ) : (
         <ul className="space-y-6">
-          {contributors.map((contributor, index) => (
+          {topThree.map((contributor, index) => (
             <li
               key={index}
               className="flex items-center gap-4 relative bg-white p-4 rounded-xl shadow-md"

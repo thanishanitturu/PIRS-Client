@@ -3,12 +3,15 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 
 const MapComponent = ({ issues }) => {
-  const locations = issues.map((issue) => ({
-    position: [issue?.position[0], issue?.position[1]],
+  const locations = issues
+  .filter((issue) => Array.isArray(issue?.position) && issue.position.length === 2)
+  .map((issue) => ({
+    position: [issue.position[0], issue.position[1]],
     status: issue.status,
     department: issue.department,
     message: issue.title,
   }));
+
   console.log(locations);
 
   const [selectedCategories, setSelectedCategories] = useState({

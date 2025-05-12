@@ -5,6 +5,8 @@ export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   const [role, setRole] = useState(localStorage.getItem("role")|| "empty");
+  const[useremail,setUseremail] = useState(localStorage.getItem("useremail")|| null);
+  const [username,setUsername] = useState(localStorage.getItem("username") || null);
   const [token,setToken] = useState(localStorage.getItem("uid") || null);
   const[deptName,setDeptName] = useState("water");
   const [snackbar, setSnackbar] = useState({ open:false, severity: "success", message: "" });
@@ -30,7 +32,7 @@ export const AppProvider = ({ children }) => {
   
   
   return (
-    <AppContext.Provider value={{role, setRole, snackbar, setSnackbar,notifications,setNotifications,deptName,setDeptName,token,setToken,allReports,setAllReports,isRender,setIsRender}}>
+    <AppContext.Provider value={{setUseremail,setUsername,role, setRole, snackbar, setSnackbar,notifications,setNotifications,deptName,setDeptName,token,setToken,allReports,setAllReports,isRender,setIsRender}}>
       {children}
     </AppContext.Provider>
   );
