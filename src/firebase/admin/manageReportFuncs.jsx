@@ -1,12 +1,12 @@
-import { debugErrorMap } from 'firebase/auth';
+import { debugErrorMap} from 'firebase/auth';
 import {db} from '../firebaseConfig'
+import { auth } from '../firebaseConfig';
 import { 
   collection, 
   getDocs, 
   writeBatch, 
   doc, 
   updateDoc,
-  arrayUnion 
 } from 'firebase/firestore';
 
 const verifyAllReports = async () => {
@@ -42,6 +42,7 @@ const verifyAllReports = async () => {
     }
 };
 const deleteReport = async (reportId) => {
+  console.log(reportId);
   try {
     if (!reportId) throw new Error("Report ID is required");
 
@@ -49,6 +50,7 @@ const deleteReport = async (reportId) => {
     const usersSnapshot = await getDocs(usersRef);
     const batch = writeBatch(db);
     let reportFound = false;
+    let deletedReportUserId = null;
 
     // Search through all user documents
     usersSnapshot.forEach((userDoc) => {
@@ -60,6 +62,8 @@ const deleteReport = async (reportId) => {
       
       if (reportIndex !== -1) {
         reportFound = true;
+        deletedReportUserId = userDoc.id; // Save userId
+
         // Create new array without the report
         const updatedReports = [
           ...reports.slice(0, reportIndex),
@@ -76,10 +80,72 @@ const deleteReport = async (reportId) => {
     }
 
     await batch.commit();
-    return "Report successfully deleted";
+
+    return {
+      success: true,
+      message: "Report successfully deleted",
+      userId: deletedReportUserId
+    };
+    
   } catch (error) {
     console.error("Delete error:", error);
     throw new Error(`Failed to delete report: ${error.message}`);
   }
 };
-export {verifyAllReports,deleteReport};
+
+
+
+const deleteReportAdmin = async (reportId) => {
+  try {
+    const adminUser = auth.currentUser;
+    if (!adminUser) {
+      throw new Error("Admin not authenticated");
+    }
+
+    // 1. Search all user reports to find the report
+    const reportsCollectionRef = collection(db, "reports");
+    const querySnapshot = await getDocs(reportsCollectionRef);
+
+    let reportFound = false;
+    let targetUserDocId = null;
+    let deletedReportUserId = null; // Stores the userId of the report owner
+
+    for (const userDoc of querySnapshot.docs) {
+      const userReports = userDoc.data().reports || [];
+      const foundReport = userReports.find(report => report.id === reportId);
+      
+      if (foundReport) {
+        reportFound = true;
+        targetUserDocId = userDoc.id;
+        deletedReportUserId = foundReport.reportedBy.uid; // Extract userId from report
+        break;
+      }
+    }
+
+    if (!reportFound) {
+      throw new Error("Report not found");
+    }
+
+    // 2. Remove the report from the user's reports array
+    const userDocRef = doc(db, "reports", targetUserDocId);
+    const userDocSnap = await getDoc(userDocRef);
+
+    const updatedReports = userDocSnap.data().reports.filter(
+      report => report.id !== reportId
+    );
+
+    await updateDoc(userDocRef, { reports: updatedReports });
+
+    console.log("✅ Admin successfully deleted the report!");
+    return { 
+      success: true, 
+      message: "Report deleted by admin",
+      userId: deletedReportUserId // Return the userId of the report owner
+    };
+    
+  } catch (error) {
+    console.error("❌ Admin report deletion failed:", error.message);
+    throw error;
+  }
+};
+export {verifyAllReports,deleteReport,deleteReportAdmin};

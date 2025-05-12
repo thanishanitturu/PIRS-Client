@@ -177,11 +177,13 @@ const IssueForm = () => {
       navigate("/dashboard");
       
       const adminUserID = await getUserIdByEmail("admin@gmail.com");
-      const notification = {
-        message:"A new Report from the user with the email:"+localStorage.getItem("useremail"),
+       const notification = {
+        title: `New Report(${title})from user"+localStorage.getItem("username")`,
+        message: `A new Report(${title}) from the user with email id: ${localStorage.getItem("useremail")}. Kindly consider this and hoping a fast clearance regarding this problem..`,
         timestamp:new Date(),
-        department:localStorage.getItem("username")
-      }
+        department:"A New Report by Community Person",
+        isRead: false,
+      };
 
       
       try{

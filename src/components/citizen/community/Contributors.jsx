@@ -6,9 +6,7 @@ import { Loader } from "lucide-react";
 const Contributors = () => {
   const [contributors, setContributors] = useState(null);
   const [loading, setLoading] = useState(true);
-  const[topThree,setTopThree] = useState([]);
-  console.log(contributors);
-  console.log(topThree);
+  const [topThree, setTopThree] = useState([]);
 
   useEffect(() => {
     const fetchContributors = async () => {
@@ -39,17 +37,15 @@ const Contributors = () => {
     fetchContributors();
   }, []);
 
-
   useEffect(() => {
     if (contributors && contributors.length > 0) {
       const sorted = [...contributors]
-        .filter(c => c.totalIssues > 0) // avoid divide by 0
+        .filter(c => c.totalIssues > 0)
         .sort((a, b) => (b.resolvedIssues / b.totalIssues) - (a.resolvedIssues / a.totalIssues));
   
       setTopThree(sorted.slice(0, 3));
     }
   }, [contributors]);
-  
 
   const getMedalIcon = (index) => {
     if (index === 0) return "🥇";
@@ -70,18 +66,18 @@ const Contributors = () => {
   }
 
   return (
-    <div className="flex flex-col rounded-lg p-6 w-full bg-gray-50">
+    <div className="flex flex-col rounded-lg p-6 w-full bg-gray-50 relative" style={{ zIndex: 1 }}>
       <h2 className="text-xl font-bold text-blue-600 mb-6 text-center">
         Top Contributors
       </h2>
       {topThree.length === 0 ? (
         <p className="text-center text-gray-500">No contributors found</p>
       ) : (
-        <ul className="space-y-6">
+        <div className="grid gap-4"  style={{zIndex:1}}>
           {topThree.map((contributor, index) => (
-            <li
+            <div
               key={index}
-              className="flex items-center gap-4 relative bg-white p-4 rounded-xl shadow-md"
+              className="flex items-center gap-4 bg-white p-4 rounded-xl shadow-md relative"
             >
               <img
                 src={contributor.photo}
@@ -92,20 +88,18 @@ const Contributors = () => {
                   e.target.src = `https://via.placeholder.com/40?text=${encodeURIComponent(contributor.name?.charAt(0) || "U")}`;
                 }}
               />
-              <div className="flex flex-col">
-                <p className="text-lg font-semibold">{contributor.name}</p>
+              <div className="flex flex-col flex-1 min-w-0">
+                <p className="text-lg font-semibold truncate">{contributor.name}</p>
                 <p className="text-sm text-gray-600">
                   Reported {contributor.totalIssues} issues, Resolved {contributor.resolvedIssues}
                 </p>
               </div>
-              {index < 3 && (
-                <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-3xl">
-                  {getMedalIcon(index)}
-                </div>
-              )}
-            </li>
+              <div className="text-3xl">
+                {getMedalIcon(index)}
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

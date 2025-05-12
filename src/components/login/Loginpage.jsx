@@ -10,7 +10,7 @@ const LoginPage = () => {
   const [currRole, setCurrRole] = useState("citizen"); 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const { setSnackbar, token, setToken, setRole,setUsername,setUseremail } = useContext(AppContext);
+  const { setSnackbar, token, setToken, setRole,setUsername,setUseremail,setDeptName } = useContext(AppContext);
 
   useEffect(() => {
     if (token) {
@@ -28,12 +28,14 @@ const LoginPage = () => {
       localStorage.setItem("uid", response.uid);
       localStorage.setItem("useremail",response.email);
       localStorage.setItem("username",response.name);
+      localStorage.setItem("deptname",response.department);
+
 
       setRole(response.role);
       setToken(response.uid);
       setUseremail(response.email);
       setUsername(response.name);
-      
+      setDeptName(response.department)
       setSnackbar({ open: true, severity: "success", message: "Login Successful..." });
       navigate(currRole === "citizen" ? "/dashboard" : "/");
     } catch (error) {

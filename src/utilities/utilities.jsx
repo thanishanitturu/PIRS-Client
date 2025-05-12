@@ -143,6 +143,12 @@ const generateDepartmentEmail = (department) => {
     return 'pirs_general_dept@gmail.com'; // fallback
   }
 };
+function formatDepartmentName(department) {
+  return department
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
 
 
-export{calculateIssueCounts,topThreeContributors,generateDepartmentEmail,calculateDeptWiseIssueCounts}
+export{calculateIssueCounts,topThreeContributors,generateDepartmentEmail,calculateDeptWiseIssueCounts,formatDepartmentName}
