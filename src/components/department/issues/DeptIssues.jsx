@@ -109,9 +109,26 @@ export default function DeptIssues() {
       </Dialog>
 
       {/* Issue Details Modal */}
-      <Dialog open={detailsModalOpen} onClose={() => setDetailsModalOpen(false)}>
+      {/* <Dialog open={detailsModalOpen} onClose={() => setDetailsModalOpen(false)} 
+      container={document.body}
+      sx={{
+    zIndex: 12000,
+    '& .MuiPaper-root': {
+      zIndex: 12000
+    }
+  }}> */}
+        <Dialog
+  open={detailsModalOpen}
+  onClose={() => setDetailsModalOpen(false)}
+  
+  >
         <DialogTitle>Issue Details</DialogTitle>
-        <DialogContent>
+        <DialogContent
+          sx={{
+      overflowY: 'auto',
+      flexGrow: 1,
+    }}
+        >
           {selectedIssue && (
             <div>
               <Typography><strong>Title:</strong> {selectedIssue.title}</Typography>
@@ -130,6 +147,32 @@ export default function DeptIssues() {
           <Button onClick={() => setDetailsModalOpen(false)} color="secondary">Close</Button>
         </DialogActions>
       </Dialog>
+      {/* Issue Details Modal */}
+{/* Issue Details Modal */}
+
+
+  <DialogTitle>Issue Details</DialogTitle>
+  <DialogContent dividers>
+    {selectedIssue && (
+      <div className="space-y-4">
+        <Typography><strong>Title:</strong> {selectedIssue.title}</Typography>
+        <Typography><strong>Description:</strong> {selectedIssue.description}</Typography>
+        <Typography><strong>Reported By:</strong> {selectedIssue.reportedBy}</Typography>
+        <Typography><strong>Department:</strong> {selectedIssue.department}</Typography>
+        <Typography><strong>Status:</strong> {selectedIssue.status}</Typography>
+        <Typography><strong>Date:</strong> {selectedIssue.date}</Typography>
+        <div className="flex flex-wrap gap-4 mt-4">
+          {selectedIssue.images.map((img, index) => (
+            <img key={index} src={img} alt="Issue" className="w-32 h-32 rounded object-cover" />
+          )}
+        </div>
+      </div>
+    )}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setDetailsModalOpen(false)} color="secondary">Close</Button>
+  </DialogActions>
+</Dialog>
     </div>
   );
 }
